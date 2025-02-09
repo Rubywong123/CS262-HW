@@ -4,7 +4,9 @@ class JSONProtocol:
     @staticmethod
     def send(socket, data):
         message = json.dumps(data).encode('utf-8')
-        message_length = len(message).to_bytes(4, byteorder='big')  # Encode length in 4 bytes
+        message_length = len(message).to_bytes(4, byteorder='big')
+        total_size = len(message) + 4
+        print(f"[JSONProtocol] Sending {total_size} bytes: {message}")
         socket.sendall(message_length + message)
 
     @staticmethod
@@ -14,6 +16,7 @@ class JSONProtocol:
             return None
         data_length = int.from_bytes(data_length_bytes, byteorder='big')
         data = socket.recv(data_length).decode('utf-8')
+        print(f"[JSONProtocol] Received {data_length + 4} bytes: {data}")
         return json.loads(data)
 
 
@@ -35,6 +38,8 @@ class CustomProtocol:
         message_str = f"{action}|{serialized_data}".encode('utf-8')
 
         message_length = len(message_str).to_bytes(4, byteorder='big')
+        total_size = len(message_str) + 4 
+        print(f"[CustomProtocol] Sending {total_size} bytes: {message_str}")
         socket.sendall(message_length + message_str)
 
     @staticmethod
@@ -47,6 +52,8 @@ class CustomProtocol:
             return None
         data_length = int.from_bytes(data_length_bytes, byteorder='big')
         data = socket.recv(data_length).decode('utf-8')
+
+        print(f"[CustomProtocol] Received {data_length + 4} bytes: {data}")
 
         parts = data.split("|", 1)
         action = parts[0]
