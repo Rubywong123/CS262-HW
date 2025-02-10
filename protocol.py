@@ -121,7 +121,7 @@ class CustomProtocol:
             6: "delete_account"
         }
 
-        action = action_map.get(action_type, "unknown")
+        action = action_map.get(action_type, 255)
         data_dict = {"action": action}
 
         for i in range(field_count):
