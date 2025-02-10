@@ -10,15 +10,6 @@ class Storage:
         self.cursor.execute("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY, sender TEXT, recipient TEXT, message TEXT)")
         self.conn.commit()
 
-    def register_user(self, username, password):
-        
-        try:
-            self.cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", (username, password_hash))
-            self.conn.commit()
-            return {"status": "success"}
-        except:
-            return {"status": "error", "message": "User already exists"}
-
     def login_register_user(self, username, password):
 
         # find if the username exists
