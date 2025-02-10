@@ -5,19 +5,28 @@ import struct
 from storage import Storage
 from protocol import CustomProtocol, JSONProtocol
 
-HOST = '127.0.0.1'
-PORT = 65432
-storage = Storage("data.db")  # SQLite database for user accounts and messages
+from argparse import ArgumentParser
+
+def parse_args():
+    parser = ArgumentParser()
+    parser.add_argument("--host", default='127.0.0.1', help="Host address")
+    parser.add_argument("--port", default=65432, help="Port number")
+    parser.add_argument("--json", action="store_true", help="Use JSON protocol")
+    return parser.parse_args()
 
 class ChatServer:
-    def __init__(self, host, port, use_json=True):
+    def __init__(self, args):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind((host, port))
+        self.host = args.host
+        self.port = args.port
+        self.server.bind((self.host, self.port))
         self.server.listen(5)
         self.clients = {}
-        self.use_json = use_json
+        self.use_json = args.json
+        self.login_users = []
 
     def handle_client(self, client_socket):
+        storage = Storage("data.db")  # SQLite database for user accounts and messages
         try:
             while True:
                 if self.use_json:
@@ -29,10 +38,12 @@ class ChatServer:
                     break
 
                 action = data.get("action")
-                if action == "register":
-                    response = storage.register_user(data["username"], data["password"])
-                elif action == "login":
-                    response = storage.login_user(data["username"], data["password"])
+                if action == "login":
+                    response = storage.login_register_user(data["username"], data["password"])
+                    # record the login status
+                    if response["status"] == "success":
+                        self.login_users.append(data["username"])
+
                 elif action == "list_accounts":
                     response = storage.list_accounts(data.get("pattern", ""))
                 elif action == "send_message":
@@ -57,7 +68,7 @@ class ChatServer:
             client_socket.close()
 
     def start(self):
-        print(f"Server running on {HOST}:{PORT}")
+        print(f"Server running on {self.host}:{self.port}")
         while True:
             client_socket, addr = self.server.accept()
             print(f"New connection from {addr}")
@@ -65,5 +76,6 @@ class ChatServer:
             client_thread.start()
 
 if __name__ == "__main__":
-    server = ChatServer(HOST, PORT, use_json=True)
+    args = parse_args()
+    server = ChatServer(args)
     server.start()

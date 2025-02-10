@@ -2,18 +2,24 @@ import socket
 import json
 import tkinter as tk
 from protocol import JSONProtocol, CustomProtocol
+from argparse import ArgumentParser
 
-HOST = '127.0.0.1'
-PORT = 65432
-USE_JSON = True  # Toggle between JSON and Custom protocol
+def parse_args():
+    parser = ArgumentParser()
+    parser.add_argument("--host", default='127.0.0.1', help="Host address")
+    parser.add_argument("--port", default=65432, help="Port number")
+    parser.add_argument("--json", action="store_true", help="Use JSON protocol")
+
+    return parser.parse_args()
+
 
 class ChatClient:
-    def __init__(self, master):
+    def __init__(self, master, args):
         self.master = master
         self.master.title("Chat Client")
         self.username = None
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client.connect((HOST, PORT))
+        self.client.connect((args.host, args.port))
         
         self.label = tk.Label(master, text="Enter Username:")
         self.label.pack()
@@ -27,12 +33,14 @@ class ChatClient:
         self.text = tk.Text(master, state=tk.DISABLED)
         self.text.pack()
 
+    
+
     def authenticate(self):
         username = self.entry.get()
         password = "password123"  # Normally, prompt for password securely
         request = {"action": "login", "username": username, "password": password}
         
-        if USE_JSON:
+        if args.json:
             JSONProtocol.send(self.client, request)
             response = JSONProtocol.receive(self.client)
         else:
@@ -45,6 +53,9 @@ class ChatClient:
         else:
             self.label.config(text="Login failed")
 
-root = tk.Tk()
-client = ChatClient(root)
-root.mainloop()
+
+if __name__ == "__main__":
+    args = parse_args()
+    root = tk.Tk()
+    client = ChatClient(root, args)
+    root.mainloop()
