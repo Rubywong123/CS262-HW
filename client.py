@@ -44,7 +44,8 @@ class ChatClient:
             JSONProtocol.send(self.client, request)
             response = JSONProtocol.receive(self.client)
         else:
-            CustomProtocol.send(self.client, request)
+            action_type = 1
+            CustomProtocol.send(self.client, action_type, username=username, password=password)
             response = CustomProtocol.receive(self.client)
 
         if response["status"] == "success":
