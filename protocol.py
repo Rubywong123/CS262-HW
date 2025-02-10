@@ -99,6 +99,7 @@ class CustomProtocol:
         """
         Receive and decode a binary message.
         - Extracts action type and fields using length-prefixed encoding.
+        - Maps binary fields to expected dictionary keys.
         """
         data_length_bytes = socket.recv(4)
         if not data_length_bytes:
@@ -109,7 +110,7 @@ class CustomProtocol:
         if not data:
             return None
 
-        action_type, field_count = struct.unpack(">BB", data[:2])
+        action_type, field_count = struct.unpack(">BB", data[:2])  # Read action type and field count
         offset = 2
 
         action_map = {
@@ -125,23 +126,21 @@ class CustomProtocol:
         data_dict = {"action": action}
 
         for i in range(field_count):
-            # login 
-            if action_type == 1:
+            if action == "login":
                 key = "username" if i == 0 else "password"
                 data_dict[key] = CustomProtocol.decode_length_prefixed_field(socket)
-            # send message
-            elif action_type == 3:
-                key = "recipient" if i == 0 else "message"
+            elif action == "send_message":
+                key = "sender" if i == 0 else "recipient" if i == 1 else "message"
                 data_dict[key] = CustomProtocol.decode_length_prefixed_field(socket)
-            # read message
-            elif action_type == 4:
+            elif action == "read_messages":
                 data_dict["limit"] = struct.unpack(">B", socket.recv(1))[0]
-            # delete message
-            elif action_type == 5:
+            elif action == "delete_message":
                 if i == 0:
                     data_dict["recipient"] = CustomProtocol.decode_length_prefixed_field(socket)
                 else:
                     data_dict["message_id"] = struct.unpack(">I", socket.recv(4))[0]
+            elif action == "delete_account":
+                pass
 
         print(f"[CustomBinaryProtocol] Received {data_length + 4} bytes: {data_dict}")
         return data_dict
