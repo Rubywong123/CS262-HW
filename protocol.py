@@ -21,7 +21,6 @@ class JSONProtocol:
         return json.loads(data)
 
 
-import struct
 
 class CustomProtocol:
     @staticmethod
