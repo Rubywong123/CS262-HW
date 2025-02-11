@@ -47,6 +47,7 @@ class ChatClient:
             action_type = 1
             CustomProtocol.send(self.client, action_type, username=username, password=password)
             response = CustomProtocol.receive(self.client)
+        print(response)    
 
         if response["status"] == "success":
             self.username = username
