@@ -71,7 +71,7 @@ class CustomProtocol:
             fields.append(CustomProtocol.encode_length_prefixed_field(kwargs["password"]))
         # list account
         elif action_type == 2:
-            pass
+            fields.append(struct.pack(">B", kwargs["page_num"]))
         # send message
         elif action_type == 3: 
             fields.append(CustomProtocol.encode_length_prefixed_field(kwargs["recipient"]))
@@ -140,6 +140,10 @@ class CustomProtocol:
                 field_value, field_size = CustomProtocol._extract_field(data, offset)
                 data_dict[key] = field_value
                 offset += field_size
+
+            elif action == "list_accounts":
+                data_dict['page_num'] = struct.unpack(">B", data[offset:offset + 1])[0]
+                offset += 1  # Move past 1-byte page_num field
 
             elif action == "send_message":
                 key = "recipient" if i == 0 else "message"

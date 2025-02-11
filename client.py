@@ -3,7 +3,10 @@ import json
 import tkinter as tk
 from protocol import JSONProtocol, CustomProtocol
 from argparse import ArgumentParser
-
+import threading
+import queue
+import time
+import bcrypt
 
 LOGIN = 1
 LIST_ACCOUNTS = 2
@@ -30,46 +33,66 @@ def parse_args():
 
 
 class ChatClient:
-    def __init__(self, master, args):
-        self.master = master
-        self.master.title("Chat Client")
+    # TODO: GUI support
+    def __init__(self, args, master=None):
+        # self.master = master
+        # self.master.title("Chat Client")
+
+
         self.username = None
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((args.host, args.port))
+
+        self.message_queue = queue.Queue()
         
-        self.label = tk.Label(master, text="Enter Username:")
-        self.label.pack()
+        # self.label = tk.Label(master, text="Enter Username:")
+        # self.label.pack()
         
-        self.entry = tk.Entry(master)
-        self.entry.pack()
+        # self.entry = tk.Entry(master)
+        # self.entry.pack()
         
-        self.button = tk.Button(master, text="Login/Register", command=self.authenticate)
-        self.button.pack()
+        # self.button = tk.Button(master, text="Login/Register", command=self.authenticate)
+        # self.button.pack()
         
-        self.text = tk.Text(master, state=tk.DISABLED)
-        self.text.pack()
+        # self.text = tk.Text(master, state=tk.DISABLED)
+        # self.text.pack()
 
     
 
     def authenticate(self):
-        username = self.entry.get()
-        password = "password123"  # Normally, prompt for password securely
-        request = {"action": "login", "username": username, "password": password}
-        
-        if args.json:
-            JSONProtocol.send(self.client, request)
-            response = JSONProtocol.receive(self.client)
-        else:
-            CustomProtocol.send(self.client, LOGIN, username=username, password=password)
-            response = CustomProtocol.receive(self.client)
-        print(response)    
+        # username = self.entry.get()
+        login = False
+        while not login:
+            print("Welcome to the chat client!")
+            username = input("Enter username: ")
+            password = input("Enter password: ")
 
-        if response["status"] == "success":
-            self.username = username
-            self.label.config(text=f"Logged in as {username}")
-            self.create_terminal_interface()
-        else:
-            self.label.config(text="Login failed")
+            # encrypt the password
+            password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+
+            request = {"action": "login", "username": username, "password": password_hash}
+            
+            if args.json:
+                JSONProtocol.send(self.client, request)
+                response = JSONProtocol.receive(self.client)
+            else:
+                CustomProtocol.send(self.client, LOGIN, username=username, password=password)
+                response = CustomProtocol.receive(self.client)
+            print(response)    
+
+            if response["status"] == "success":
+                login = True
+                self.username = username
+                print(f"##########Logged in as {username}##########")
+                # self.label.config(text=f"Logged in as {username}")
+                # listen for messages from the server
+                listener_thread = threading.Thread(target=self.listen_for_messages, daemon=True)
+                listener_thread.start()
+                self.create_terminal_interface()
+
+            else:
+                print("Login failed: ", response["message"])
+                # self.label.config(text="Login failed")
 
     def create_terminal_interface(self):
         while True:
@@ -99,34 +122,64 @@ class ChatClient:
                 print("Invalid choice. Please try again.")
 
     def list_accounts(self):
-        request = {'action_type': LIST_ACCOUNTS}
-        response = self.send_request(request)
+        page_num = 1
+        request = {'action_type': LIST_ACCOUNTS, 'page_num': page_num}
+        self.send_request(request)
+        response = self.check_incoming_message()
+        r = ''
         
-        if response["status"] == "success":
+        while response["status"] == "success":
+            
+            print(f"Page {page_num}")
             print("Accounts:", response["message"])
+            # wait for user input to continue
+            command = input("Press 'n' to view the next page, 'b' to view the previous page, or press 'q' to quit: ")
+            if command == 'q':
+                break
+            elif command == 'n':
+                page_num += 1
+            elif command == 'b':
+                page_num = max(1, page_num - 1)
+            request = {'action_type': LIST_ACCOUNTS, 'page_num': page_num}
+            self.send_request(request)
+
+            response = self.check_incoming_message()
 
     def send_message(self):
         recipient = input("Enter the recipient username: ")
         message = input("Enter the message: ")
         request = {'action_type': SEND_MESSAGE, "recipient": recipient, "message": message}
-        response = self.send_request(request)
+        self.send_request(request)
+
+        response = self.check_incoming_message()
 
     def read_messages(self):
         number = input("Enter the number of messages to read: ")
         request = {"action_type": READ_MESSAGES, 'limit': int(number)}
-        response = self.send_request(request)
+        self.send_request(request)
+
+        response = self.check_incoming_message()
 
 
     def delete_message(self):
         recipient = input("Enter the recipient username: ")
         message_id = input("Enter the message ID to delete: ")
         request = {"action_type": DELETE_MESSAGE, "recipient": recipient,  "message_id": int(message_id)}
-        response = self.send_request(request)
+        self.send_request(request)
+
+        response = self.check_incoming_message()
 
     def delete_account(self):
         password = input("Enter your password to delete your account: ")
-        request = {"action_type": DELETE_ACCOUNT, "password": password}
-        response = self.send_request(request)
+        password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+        request = {"action_type": DELETE_ACCOUNT, "password": password_hash}
+        self.send_request(request)
+
+        response = self.check_incoming_message()
+        if response["status"] == "success":
+            self.client.close()
+            exit(0)
+
 
     def send_request(self, request):
         if args.json:
@@ -134,22 +187,36 @@ class ChatClient:
             action = action_map[action]
             request = {"action": action, **request}
             JSONProtocol.send(self.client, **request)
-            response = JSONProtocol.receive(self.client)
         else:
             action_type = request.pop('action_type', None)
             CustomProtocol.send(self.client, action_type, **request)
-            response = CustomProtocol.receive(self.client)
 
-        print("Server response:", response)
+    def listen_for_messages(self):
+        """Continuously listens for messages from the server."""
+        while True:
+            try:
+                if args.json:
+                    response = JSONProtocol.receive(self.client)
+                else:
+                    response = CustomProtocol.receive(self.client)
 
-        if action_type == DELETE_ACCOUNT and response["status"] == "success":
-            self.client.close()
-            exit(0)
+                if response:
+                    print("\n[Server]:", response)
+                    self.message_queue.put(response)
+            except Exception as e:
+                print("[Error]: Disconnected from server.", e)
+                break
 
-        return response
+    def check_incoming_message(self):
+        time.sleep(1)
+        while not self.message_queue.empty():
+            message = self.message_queue.get()
+        return message
+
 
 if __name__ == "__main__":
     args = parse_args()
-    root = tk.Tk()
-    client = ChatClient(root, args)
-    root.mainloop()
+    # root = tk.Tk()
+    client = ChatClient(args)
+
+    client.authenticate()

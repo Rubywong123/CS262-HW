@@ -21,9 +21,13 @@ class ChatServer:
         self.port = args.port
         self.server.bind((self.host, self.port))
         self.server.listen(5)
-        self.clients = {}
+        
         self.use_json = args.json
+        # map the ip address and port of the client to the username
         self.login_users = {}
+        # map the ip address and port of the client to the client socket
+        self.clients_sockets = {}
+
 
     def handle_client(self, client_socket):
         storage = Storage("data.db")  # SQLite database for user accounts and messages
@@ -50,9 +54,21 @@ class ChatServer:
                         self.login_users[addr] = data["username"]
 
                 elif action == "list_accounts":
-                    response = storage.list_accounts()
+                    response = storage.list_accounts(data['page_num'])
                 elif action == "send_message":
                     sender = self.login_users.get(addr)
+                    # check if the recipient logged in
+                    # if logged in, directly send the message
+                    if data["recipient"] in self.login_users.values():
+                        response = {"status": "New message", 'message': f"{sender}: {data['message']}"}
+                        # find the target client socket
+                        addr = list(self.login_users.keys())[list(self.login_users.values()).index(data["recipient"])]
+                        recipient_socket = self.clients_sockets[addr]
+                        if self.use_json:
+                            JSONProtocol.send(recipient_socket, response)
+                        else:
+                            CustomProtocol.send(recipient_socket, 7, **response)
+                        # if not logged in, store the message
                     response = storage.send_message(sender, data["recipient"], data["message"])
                 elif action == "read_messages":
                     user = self.login_users.get(addr)
@@ -90,6 +106,8 @@ class ChatServer:
         while True:
             client_socket, addr = self.server.accept()
             print(f"New connection from {addr}")
+            addr = f'{addr[0]}:{addr[1]}'
+            self.clients_sockets[addr] = client_socket
             client_thread = threading.Thread(target=self.handle_client, args=(client_socket,))
             client_thread.start()
 

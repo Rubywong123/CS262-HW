@@ -10,8 +10,8 @@ class Storage:
         self.cursor.execute("CREATE TABLE IF NOT EXISTS messages (id INT PRIMARY KEY, sender TEXT, recipient TEXT, message TEXT, status TEXT)")
         self.conn.commit()
 
-    def login_register_user(self, username, password):
-
+    def login_register_user(self, username, password_hash):
+        password = password_hash.decode()
         # find if the username exists
         self.cursor.execute("SELECT password_hash FROM users WHERE username=?", (username,))
         user = self.cursor.fetchone()
@@ -28,8 +28,12 @@ class Storage:
             self.conn.commit()
             return {"status": "success"}
     
-    def list_accounts(self):
-        self.cursor.execute("SELECT username FROM users")
+    def list_accounts(self, page_num):
+        num_per_page = 5
+        
+        offset = (page_num - 1) * num_per_page
+
+        self.cursor.execute("SELECT username FROM users ORDER BY username LIMIT ? OFFSET ?", (num_per_page, offset))
         response = {
             'status': 'success',
             'message': [row[0] for row in self.cursor.fetchall()]
@@ -81,7 +85,9 @@ class Storage:
         self.conn.commit()
         return {"status": "success"}
     
-    def delete_account(self, username, password):
+    def delete_account(self, username, password_hash):
+        password = password_hash.decode()
+        
         # check if the password is correct
         self.cursor.execute("SELECT password_hash FROM users WHERE username=?", (username,))
         user = self.cursor.fetchone()
