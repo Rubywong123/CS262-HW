@@ -60,7 +60,7 @@ class ChatServer:
                 if self.use_json:
                     JSONProtocol.send(client_socket, response)
                 else:
-                    CustomProtocol.send(client_socket, response)
+                    CustomProtocol.send(client_socket, 7, response)
 
         except Exception as e:
             print(f"Error: {e}")

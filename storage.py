@@ -51,12 +51,16 @@ class Storage:
     def read_messages(self, username, limit=10):
         # read undelivered messages
         self.cursor.execute("SELECT id, sender, message FROM messages WHERE sender=? and status='unread' ORDER BY id DESC LIMIT ?", (username, limit))
+        
         messages = [{"id": row[0], "sender": row[1], "message": row[2]} for row in self.cursor.fetchall()]
         # mark messages as read
         for message in messages:
             self.cursor.execute("UPDATE messages SET status='read' WHERE id=?", (message["id"],))
 
         self.conn.commit()
+
+        # if no undelivered messages, return a response
+        
         return messages
     
     def delete_message(self, username, message_id):

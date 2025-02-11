@@ -119,7 +119,8 @@ class CustomProtocol:
             3: "send_message",
             4: "read_messages",
             5: "delete_message",
-            6: "delete_account"
+            6: "delete_account",
+            7: 'response'
         }
 
         action = action_map.get(action_type, 255)
