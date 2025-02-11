@@ -23,10 +23,11 @@ class ChatServer:
         self.server.listen(5)
         self.clients = {}
         self.use_json = args.json
-        self.login_users = []
+        self.login_users = {}
 
     def handle_client(self, client_socket):
         storage = Storage("data.db")  # SQLite database for user accounts and messages
+        addr = f'{client_socket.getpeername()[0]}:{client_socket.getpeername()[1]}'  # IP address and port of the client
         try:
             while True:
                 if self.use_json:
@@ -42,18 +43,30 @@ class ChatServer:
                     response = storage.login_register_user(data["username"], data["password"])
                     # record the login status
                     if response["status"] == "success":
-                        self.login_users.append(data["username"])
+                        # get ip address and port of the client
+                        ip = client_socket.getpeername()[0]
+                        port = client_socket.getpeername()[1]
+                        print(f"User {data['username']} logged in from {addr}")
+                        self.login_users[addr] = data["username"]
 
                 elif action == "list_accounts":
-                    response = storage.list_accounts(data.get("pattern", ""))
+                    response = storage.list_accounts()
                 elif action == "send_message":
-                    response = storage.send_message(data["sender"], data["recipient"], data["message"])
+                    sender = self.login_users.get(addr)
+                    response = storage.send_message(sender, data["recipient"], data["message"])
                 elif action == "read_messages":
-                    response = storage.get_messages(data["username"], data.get("limit", 10))
+                    user = self.login_users.get(addr)
+                    response = storage.read_messages(user, data.get("limit", 10))
                 elif action == "delete_message":
-                    response = storage.delete_message(data["username"], data["message_id"])
+                    user = self.login_users.get(addr)
+                    response = storage.delete_message(user, data['recipient'], data["message_id"])
                 elif action == "delete_account":
-                    response = storage.delete_account(data["username"], data["password"])
+                    user = self.login_users.get(addr)
+                    response = storage.delete_account(user, data["password"])
+                    # remove the user from the login_users
+                    if response["status"] == "success":
+                        self.login_users.pop(addr)
+                
                 else:
                     response = {"status": "error", "message": "Unknown action"}
                 
@@ -63,6 +76,9 @@ class ChatServer:
                     if not response or "status" not in response:
                         response = {"status": "error", "message": "Invalid response from server"}
                     CustomProtocol.send(client_socket, 7, **response)
+
+                if action == "delete_account" and response["status"] == "success":
+                    break
 
         except Exception as e:
             print(f"Error: {e}")

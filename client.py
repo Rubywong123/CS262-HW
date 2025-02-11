@@ -4,6 +4,22 @@ import tkinter as tk
 from protocol import JSONProtocol, CustomProtocol
 from argparse import ArgumentParser
 
+
+LOGIN = 1
+LIST_ACCOUNTS = 2
+SEND_MESSAGE = 3
+READ_MESSAGES = 4
+DELETE_MESSAGE = 5
+DELETE_ACCOUNT = 6
+action_map = {
+    1: "login",
+    2: "list_accounts",
+    3: "send_message",
+    4: "read_messages",
+    5: "delete_message",
+    6: "delete_account",
+}
+
 def parse_args():
     parser = ArgumentParser()
     parser.add_argument("--host", default='127.0.0.1', help="Host address")
@@ -44,8 +60,7 @@ class ChatClient:
             JSONProtocol.send(self.client, request)
             response = JSONProtocol.receive(self.client)
         else:
-            action_type = 1
-            CustomProtocol.send(self.client, action_type, username=username, password=password)
+            CustomProtocol.send(self.client, LOGIN, username=username, password=password)
             response = CustomProtocol.receive(self.client)
         print(response)    
 
@@ -78,45 +93,58 @@ class ChatClient:
             elif choice == '5':
                 self.delete_account()
             elif choice == '6':
-                break
+                self.client.close()
+                exit(0)
             else:
                 print("Invalid choice. Please try again.")
 
-        def list_accounts(self):
-            request = {"action": "list_accounts"}
-            response = self.send_request(request)
-            
+    def list_accounts(self):
+        request = {'action_type': LIST_ACCOUNTS}
+        response = self.send_request(request)
+        
+        if response["status"] == "success":
+            print("Accounts:", response["message"])
 
-        def send_message(self):
-            recipient = input("Enter the recipient username: ")
-            message = input("Enter the message: ")
-            request = {"action": "send_message", "recipient": recipient, "message": message}
-            response = self.send_request(request)
+    def send_message(self):
+        recipient = input("Enter the recipient username: ")
+        message = input("Enter the message: ")
+        request = {'action_type': SEND_MESSAGE, "recipient": recipient, "message": message}
+        response = self.send_request(request)
 
-        def read_messages(self):
-            number = input("Enter the number of messages to read: ")
-            request = {"action": "read_messages", 'limit': int(number)}
-            response = self.send_request(request)
+    def read_messages(self):
+        number = input("Enter the number of messages to read: ")
+        request = {"action_type": READ_MESSAGES, 'limit': int(number)}
+        response = self.send_request(request)
 
 
-        def delete_message(self):
-            message_id = input("Enter the message ID to delete: ")
-            request = {"action": "delete_message", "message_id": message_id}
-            response = self.send_request(request)
+    def delete_message(self):
+        recipient = input("Enter the recipient username: ")
+        message_id = input("Enter the message ID to delete: ")
+        request = {"action_type": DELETE_MESSAGE, "recipient": recipient,  "message_id": int(message_id)}
+        response = self.send_request(request)
 
-        def delete_account(self):
-            request = {"action": "delete_account", "username": self.username}
-            response = self.send_request(request)
+    def delete_account(self):
+        password = input("Enter your password to delete your account: ")
+        request = {"action_type": DELETE_ACCOUNT, "password": password}
+        response = self.send_request(request)
 
     def send_request(self, request):
         if args.json:
-            JSONProtocol.send(self.client, request)
+            action = request.pop('action_type', None)
+            action = action_map[action]
+            request = {"action": action, **request}
+            JSONProtocol.send(self.client, **request)
             response = JSONProtocol.receive(self.client)
         else:
-            CustomProtocol.send(self.client, request)
+            action_type = request.pop('action_type', None)
+            CustomProtocol.send(self.client, action_type, **request)
             response = CustomProtocol.receive(self.client)
 
         print("Server response:", response)
+
+        if action_type == DELETE_ACCOUNT and response["status"] == "success":
+            self.client.close()
+            exit(0)
 
         return response
 

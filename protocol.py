@@ -85,13 +85,14 @@ class CustomProtocol:
             fields.append(struct.pack(">I", kwargs["message_id"]))
         # delete account 
         elif action_type == 6:
-            pass
+            fields.append(CustomProtocol.encode_length_prefixed_field(kwargs["password"]))
         elif action_type == 7:
             for key, value in kwargs.items():
-                fields.append(CustomProtocol.encode_length_prefixed_field(key))
                 fields.append(CustomProtocol.encode_length_prefixed_field(str(value)))
 
         field_count = len(fields)
+        print(f"[DEBUG] kwargs: {kwargs.items()}")
+        print(f"[DEBUG] Fields: {fields}")
         message = struct.pack(">BB", action_type, field_count) + b"".join(fields)
         message_length = struct.pack(">I", len(message))  # 4-byte message length prefix
 
@@ -134,6 +135,7 @@ class CustomProtocol:
 
         for i in range(field_count):
             if action == "login":
+                print(field_count)
                 key = "username" if i == 0 else "password"
                 field_value, field_size = CustomProtocol._extract_field(data, offset)
                 data_dict[key] = field_value
@@ -159,16 +161,17 @@ class CustomProtocol:
                     offset += 4  # Move past 4-byte message_id field
 
             elif action == "delete_account":
-                pass  # No additional fields for delete_account
+                key = "password"
+                field_value, field_size = CustomProtocol._extract_field(data, offset)
+                data_dict[key] = field_value
+                offset += field_size
 
             elif action == "response":
-                key, field_size = CustomProtocol._extract_field(data, offset)
-                offset += field_size
+                key = 'status' if i == 0 else 'message'
                 value, field_size = CustomProtocol._extract_field(data, offset)
                 offset += field_size
                 data_dict[key] = value
-                break
-
+            
         print(f"[CustomProtocol] Received {data_length + 4} bytes: {data_dict}")
         return data_dict
     
