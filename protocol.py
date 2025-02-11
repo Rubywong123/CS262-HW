@@ -87,7 +87,9 @@ class CustomProtocol:
         elif action_type == 6:
             pass
         elif action_type == 7:
-            pass
+            for key, value in kwargs.items():
+                fields.append(CustomProtocol.encode_length_prefixed_field(key))
+                fields.append(CustomProtocol.encode_length_prefixed_field(str(value)))
 
         field_count = len(fields)
         message = struct.pack(">BB", action_type, field_count) + b"".join(fields)
@@ -111,7 +113,6 @@ class CustomProtocol:
         data = socket.recv(data_length)
         print(f"[DEBUG] Raw Data Received: {data.hex()}")
 
-
         if not data:
             return None
 
@@ -128,25 +129,53 @@ class CustomProtocol:
             7: "response"
         }
 
-        action = action_map.get(action_type, 255)
+        action = action_map.get(action_type, "unknown")
         data_dict = {"action": action}
 
         for i in range(field_count):
             if action == "login":
                 key = "username" if i == 0 else "password"
-                data_dict[key] = CustomProtocol.decode_length_prefixed_field(socket)
+                field_value, field_size = CustomProtocol._extract_field(data, offset)
+                data_dict[key] = field_value
+                offset += field_size
+
             elif action == "send_message":
-                key = "sender" if i == 0 else "recipient" if i == 1 else "message"
-                data_dict[key] = CustomProtocol.decode_length_prefixed_field(socket)
+                key = "recipient" if i == 0 else "message"
+                field_value, field_size = CustomProtocol._extract_field(data, offset)
+                data_dict[key] = field_value
+                offset += field_size
+
             elif action == "read_messages":
-                data_dict["limit"] = struct.unpack(">B", socket.recv(1))[0]
+                data_dict["limit"] = struct.unpack(">B", data[offset:offset + 1])[0]
+                offset += 1  # Move past 1-byte limit field
+
             elif action == "delete_message":
                 if i == 0:
-                    data_dict["recipient"] = CustomProtocol.decode_length_prefixed_field(socket)
+                    field_value, field_size = CustomProtocol._extract_field(data, offset)
+                    data_dict["recipient"] = field_value
+                    offset += field_size
                 else:
-                    data_dict["message_id"] = struct.unpack(">I", socket.recv(4))[0]
+                    data_dict["message_id"] = struct.unpack(">I", data[offset:offset + 4])[0]
+                    offset += 4  # Move past 4-byte message_id field
+
             elif action == "delete_account":
-                pass
+                pass  # No additional fields for delete_account
 
         print(f"[CustomProtocol] Received {data_length + 4} bytes: {data_dict}")
         return data_dict
+    
+    @staticmethod
+    def _extract_field(data, offset):
+        """
+        Extract a length-prefixed field from binary data.
+        Returns the extracted value and the number of bytes read.
+        """
+        length = struct.unpack(">B", data[offset:offset + 1])[0]  # Read 1-byte length
+        if length == 0:
+            length = struct.unpack(">I", data[offset + 1:offset + 5])[0]  # Read 4-byte length if prefix is 0
+            offset += 4  # Move past the 4-byte length field
+
+        value = data[offset + 1:offset + 1 + length].decode("utf-8")
+        return value, (1 + length if length < 255 else 5 + length)
+
+
