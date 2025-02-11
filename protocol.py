@@ -92,7 +92,6 @@ class CustomProtocol:
                 fields.append(CustomProtocol.encode_length_prefixed_field(str(value)))
 
         field_count = len(fields)
-        breakpoint()
         message = struct.pack(">BB", action_type, field_count) + b"".join(fields)
         message_length = struct.pack(">I", len(message))  # 4-byte message length prefix
 
@@ -161,6 +160,14 @@ class CustomProtocol:
 
             elif action == "delete_account":
                 pass  # No additional fields for delete_account
+
+            elif action == "response":
+                key, field_size = CustomProtocol._extract_field(data, offset)
+                offset += field_size
+                value, field_size = CustomProtocol._extract_field(data, offset)
+                offset += field_size
+                data_dict[key] = value
+                break
 
         print(f"[CustomProtocol] Received {data_length + 4} bytes: {data_dict}")
         return data_dict

@@ -52,9 +52,9 @@ class ChatClient:
         if response["status"] == "success":
             self.username = username
             self.label.config(text=f"Logged in as {username}")
+            self.create_terminal_interface()
         else:
             self.label.config(text="Login failed")
-            self.create_terminal_interface()
 
     def create_terminal_interface(self):
         while True:
