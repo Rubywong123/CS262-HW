@@ -86,12 +86,15 @@ class CustomProtocol:
         # delete account 
         elif action_type == 6:
             pass
+        elif action_type == 7:
+            pass
 
         field_count = len(fields)
+        breakpoint()
         message = struct.pack(">BB", action_type, field_count) + b"".join(fields)
         message_length = struct.pack(">I", len(message))  # 4-byte message length prefix
 
-        print(f"[CustomBinaryProtocol] Sending {len(message) + 4} bytes")
+        print(f"[CustomProtocol] Sending {len(message) + 4} bytes")
         socket.sendall(message_length + message)
 
     @staticmethod
@@ -104,8 +107,11 @@ class CustomProtocol:
         data_length_bytes = socket.recv(4)
         if not data_length_bytes:
             return None
+
         data_length = struct.unpack(">I", data_length_bytes)[0]
         data = socket.recv(data_length)
+        print(f"[DEBUG] Raw Data Received: {data.hex()}")
+
 
         if not data:
             return None
@@ -120,7 +126,7 @@ class CustomProtocol:
             4: "read_messages",
             5: "delete_message",
             6: "delete_account",
-            7: 'response'
+            7: "response"
         }
 
         action = action_map.get(action_type, 255)
@@ -143,5 +149,5 @@ class CustomProtocol:
             elif action == "delete_account":
                 pass
 
-        print(f"[CustomBinaryProtocol] Received {data_length + 4} bytes: {data_dict}")
+        print(f"[CustomProtocol] Received {data_length + 4} bytes: {data_dict}")
         return data_dict
