@@ -10,8 +10,9 @@ class Storage:
         self.cursor.execute("CREATE TABLE IF NOT EXISTS messages (id INT PRIMARY KEY, sender TEXT, recipient TEXT, message TEXT, status TEXT)")
         self.conn.commit()
 
-    def login_register_user(self, username, password_hash):
-        password = password_hash.decode()
+    def login_register_user(self, username, password):
+        
+        # change it to bytes type
         # find if the username exists
         self.cursor.execute("SELECT password_hash FROM users WHERE username=?", (username,))
         user = self.cursor.fetchone()
@@ -58,7 +59,7 @@ class Storage:
         self.cursor.execute("SELECT id, sender, recipient, message FROM messages WHERE recipient=? and status='unread' ORDER BY id DESC LIMIT ?", (username, limit))
         
         messages = [{"id": row[0], "sender": row[1], "message": row[3]} for row in self.cursor.fetchall()]
-        breakpoint()
+        
         # mark messages as read
         for message in messages:
             self.cursor.execute("UPDATE messages SET status='read' WHERE id=?", (message["id"],))
@@ -85,8 +86,7 @@ class Storage:
         self.conn.commit()
         return {"status": "success"}
     
-    def delete_account(self, username, password_hash):
-        password = password_hash.decode()
+    def delete_account(self, username, password):
         
         # check if the password is correct
         self.cursor.execute("SELECT password_hash FROM users WHERE username=?", (username,))

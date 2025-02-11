@@ -180,7 +180,7 @@ class CustomProtocol:
         return data_dict
     
     @staticmethod
-    def _extract_field(data, offset):
+    def _extract_field(data, offset, encrypted=False):
         """
         Extract a length-prefixed field from binary data.
         Returns the extracted value and the number of bytes read.
@@ -190,7 +190,7 @@ class CustomProtocol:
             length = struct.unpack(">I", data[offset + 1:offset + 5])[0]  # Read 4-byte length if prefix is 0
             offset += 4  # Move past the 4-byte length field
 
-        value = data[offset + 1:offset + 1 + length].decode("utf-8")
+        value = data[offset + 1:offset + 1 + length].decode("utf-8") if not encrypted else data[offset + 1:offset + 1 + length]
         return value, (1 + length if length < 255 else 5 + length)
 
 

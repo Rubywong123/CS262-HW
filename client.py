@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 import threading
 import queue
 import time
-import bcrypt
+
 
 LOGIN = 1
 LIST_ACCOUNTS = 2
@@ -67,10 +67,7 @@ class ChatClient:
             username = input("Enter username: ")
             password = input("Enter password: ")
 
-            # encrypt the password
-            password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-
-            request = {"action": "login", "username": username, "password": password_hash}
+            request = {"action": "login", "username": username, "password": password}
             
             if args.json:
                 JSONProtocol.send(self.client, request)
@@ -171,8 +168,7 @@ class ChatClient:
 
     def delete_account(self):
         password = input("Enter your password to delete your account: ")
-        password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-        request = {"action_type": DELETE_ACCOUNT, "password": password_hash}
+        request = {"action_type": DELETE_ACCOUNT, "password": password}
         self.send_request(request)
 
         response = self.check_incoming_message()
