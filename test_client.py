@@ -1,72 +1,75 @@
+import unittest
+from unittest.mock import MagicMock, patch
 import socket
-import struct
+from client import ChatClient
+from protocol import JSONProtocol, CustomProtocol
+from argparse import Namespace
+import tkinter as tk
 
-# Connect to server
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(("127.0.0.1", 65432))
+class TestChatClient(unittest.TestCase):
+    def setUp(self):
+        self.root = tk.Tk()
+        self.mock_socket = MagicMock(spec=socket.socket)
+        args = Namespace(host='127.0.0.1', port=65432, json=True)
+        
+        with patch('socket.socket', return_value=self.mock_socket):
+            self.client = ChatClient(args, self.root)
 
-def send_message(action_type, **kwargs):
-    """
-    Helper function to send a message using the custom binary protocol.
-    """
-    fields = []
+    def tearDown(self):
+        self.root.destroy()
+
+    def test_authenticate_success_json(self):
+        self.client.username_entry.insert(0, "testuser")
+        self.client.password_entry.insert(0, "testpass")
+        
+        with patch.object(JSONProtocol, 'send') as mock_send, \
+             patch.object(JSONProtocol, 'receive', return_value={"status": "success"}):
+            
+            self.client.authenticate()
+            self.assertEqual(self.client.username, "testuser")
+            mock_send.assert_called()
     
-    # Encode fields dynamically
-    if action_type == 1:  # Login (username, password)
-        fields.append(kwargs["username"].encode("utf-8"))
-        fields.append(kwargs["password"].encode("utf-8"))
-    elif action_type == 3:  # Send message (sender, recipient, message)
-        fields.append(kwargs["sender"].encode("utf-8"))
-        fields.append(kwargs["recipient"].encode("utf-8"))
-        fields.append(kwargs["message"].encode("utf-8"))
-    elif action_type == 4:  # Read messages (limit)
-        fields.append(struct.pack(">B", kwargs["limit"]))  # 1-byte integer
-    elif action_type == 5:  # Delete message (recipient, message_id)
-        fields.append(kwargs["recipient"].encode("utf-8"))
-        fields.append(struct.pack(">I", kwargs["message_id"]))  # 4-byte integer
-    elif action_type == 6:  # Delete account (no fields)
-        pass
+    def test_authenticate_success_custom(self):
+        self.client.args.json = False
+        self.client.username_entry.insert(0, "testuser")
+        self.client.password_entry.insert(0, "testpass")
+        
+        with patch.object(CustomProtocol, 'send') as mock_send, \
+             patch.object(CustomProtocol, 'receive', return_value={"status": "success"}):
+            
+            self.client.authenticate()
+            self.assertEqual(self.client.username, "testuser")
+            mock_send.assert_called()
+    
+    def test_send_message_json(self):
+        self.client.create_main_screen()
+        with patch('tkinter.simpledialog.askstring', side_effect=["friend", "Hello"]):
+            with patch.object(JSONProtocol, 'send') as mock_send:
+                self.client.send_message()
+                mock_send.assert_called()
+    
+    def test_send_message_custom(self):
+        self.client.args.json = False
+        self.client.create_main_screen()
+        with patch('tkinter.simpledialog.askstring', side_effect=["friend", "Hello"]):
+            with patch.object(CustomProtocol, 'send') as mock_send:
+                self.client.send_message()
+                mock_send.assert_called()
+    
+    def test_list_accounts_json(self):
+        with patch.object(JSONProtocol, 'send') as mock_send, \
+             patch.object(JSONProtocol, 'receive', return_value={"status": "success", "message": ["user1", "user2"]}):
+            
+            self.client.list_accounts()
+            mock_send.assert_called()
+    
+    def test_list_accounts_custom(self):
+        self.client.args.json = False
+        with patch.object(CustomProtocol, 'send') as mock_send, \
+             patch.object(CustomProtocol, 'receive', return_value={"status": "success", "message": ["user1", "user2"]}):
+            
+            self.client.list_accounts()
+            mock_send.assert_called()
 
-    field_count = len(fields)
-    packed_message = struct.pack(">BB", action_type, field_count) + b"".join(fields)
-    message_length = struct.pack(">I", len(packed_message))  # 4-byte length prefix
-
-    client.sendall(message_length + packed_message)
-    print(f"[DEBUG] Sent {len(packed_message) + 4} bytes")
-
-def receive_response():
-    """
-    Receives a response from the server.
-    """
-    data_length_bytes = client.recv(4)
-    if not data_length_bytes:
-        print("[ERROR] No response received")
-        return None
-    data_length = struct.unpack(">I", data_length_bytes)[0]
-    data = client.recv(data_length)
-
-    print(f"[DEBUG] Received {data_length + 4} bytes: {data}")
-
-# Test cases
-print("Logging in...")
-send_message(1, username="alice", password="securepass")
-receive_response()
-
-print("Sending message...")
-send_message(3, sender="alice", recipient="bob", message="Hello, Bob!")
-receive_response()
-
-print("Reading messages...")
-send_message(4, limit=5)
-receive_response()
-
-print("Deleting message...")
-send_message(5, recipient="bob", message_id=123)
-receive_response()
-
-print("Deleting account...")
-send_message(6)
-receive_response()
-
-# Close connection
-client.close()
+if __name__ == "__main__":
+    unittest.main()
