@@ -146,6 +146,21 @@ class TestChatClient(unittest.TestCase):
             mock_close.assert_called_once()
             mock_quit.assert_called_once()
 
+    def test_listen_for_messages_success_with_array(self):
+        self.client.create_main_screen()
+        mock_response = {
+            "action": "response",
+            "status": "success",
+            "message": '[{"sender": "user1", "message": "Hi"}, {"sender": "user2", "message": "Hello"}]'
+        }
+        
+        with patch.object(JSONProtocol, 'receive', side_effect=[mock_response, Exception("Connection closed")]), \
+            patch.object(self.client, 'update_chat_log') as mock_update:
+            
+            self.client.listen_for_messages()
+            mock_update.assert_any_call("From user1: Hi")
+            mock_update.assert_any_call("From user2: Hello")
+
 
 if __name__ == "__main__":
     unittest.main()

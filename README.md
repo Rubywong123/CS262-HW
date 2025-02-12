@@ -37,7 +37,7 @@ The test coverage statistics for the codebase are as follows:
 
 | File              | Statements | Missing | Coverage |
 |------------------|------------|----------|------------|
-| client.py        | 154        | 32       | 79%        |
+| client.py        | 154        | 20       | 87%        |
 | db_viewer.py     | 16         | 1        | 94%        |
 | protocol.py      | 124        | 16       | 87%        |
 | server.py        | 86         | 17       | 80%        |
@@ -47,5 +47,5 @@ The test coverage statistics for the codebase are as follows:
 | test_protocol.py | 115        | 1        | 99%        |
 | test_server.py   | 73         | 1        | 99%        |
 | test_storage.py  | 64         | 1        | 98%        |
-| **TOTAL**        | **826**    | **72**   | **91%**    |
+| **TOTAL**        | **826**    | **60**   | **93%**    |
 
