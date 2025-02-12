@@ -132,8 +132,10 @@ class ChatClient:
         if password:
             request = {"action_type": DELETE_ACCOUNT, "password": password}
             self.send_request(request)
-            response = self.check_incoming_message()
-            if response["status"] == "success":
+            
+            response = JSONProtocol.receive(self.client) if self.args.json else CustomProtocol.receive(self.client)
+            
+            if response and response.get("status") == "success":
                 self.client.close()
                 self.master.quit()
     
