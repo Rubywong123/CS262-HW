@@ -21,22 +21,24 @@ class JSONProtocol:
         return json.loads(data)
 
 
-
 class CustomProtocol:
     @staticmethod
     def encode_length_prefixed_field(value):
         """
-        Encode a string field with a length prefix.
-        - If the length is < 255, encode as a single-byte length.
+        The CustomProtocol provides a binary-encoded wire protocol for communication. 
+        It encodes a string field with a length prefix.
+        - If the length is < 255, encode as a single-byte length
         - If the length is >= 255, prefix with `0x00` and use a 4-byte big-endian length.
         """
         value_bytes = value.encode("utf-8")
         length = len(value_bytes)
 
+        # if length < 255, use single-byte length
         if length < 255:
-            return struct.pack(">B", length) + value_bytes  # Single-byte length
+            return struct.pack(">B", length) + value_bytes
+        # if length >= 255 we use 0-byte followed by 4-byte length
         else:
-            return struct.pack(">BI", 0, length) + value_bytes  # 0-byte followed by 4-byte length
+            return struct.pack(">BI", 0, length) + value_bytes
 
     @staticmethod
     def decode_length_prefixed_field(socket):
@@ -48,10 +50,12 @@ class CustomProtocol:
         length_prefix = socket.recv(1)
         if not length_prefix:
             return None
-
-        length = struct.unpack(">B", length_prefix)[0]  # Read 1-byte length
+        
+        # read 1-byte length
+        length = struct.unpack(">B", length_prefix)[0]
+        # read 4-byte length if prefix is 0
         if length == 0:
-            length = struct.unpack(">I", socket.recv(4))[0]  # Read 4-byte length if prefix is 0
+            length = struct.unpack(">I", socket.recv(4))[0]
 
         return socket.recv(length).decode("utf-8")
 
@@ -59,7 +63,8 @@ class CustomProtocol:
     def send(socket, action_type, **kwargs):
         """
         Send a binary-encoded message over the socket.
-        - 1 byte: Action type
+        Each messages consists of:
+        - 1 byte: Action type (e.g. 1=login)
         - 1 byte: Field count
         - Variable-length fields (each with a length prefix)
         """
@@ -103,8 +108,11 @@ class CustomProtocol:
     def receive(socket):
         """
         Receive and decode a binary message.
-        - Extracts action type and fields using length-prefixed encoding.
-        - Maps binary fields to expected dictionary keys.
+        Each received message consit of:
+        - 4-byte for overall message length
+        - 1-byte action type
+        - 1-byte field count
+        - variable-length fields (including 1-byte individual field message length)
         """
         data_length_bytes = socket.recv(4)
         if not data_length_bytes:
@@ -116,8 +124,8 @@ class CustomProtocol:
 
         if not data:
             return None
-
-        action_type, field_count = struct.unpack(">BB", data[:2])  # Read action type and field count
+        # Read action type and field count
+        action_type, field_count = struct.unpack(">BB", data[:2])
         offset = 2
 
         action_map = {
@@ -143,7 +151,7 @@ class CustomProtocol:
 
             elif action == "list_accounts":
                 data_dict['page_num'] = struct.unpack(">B", data[offset:offset + 1])[0]
-                offset += 1  # Move past 1-byte page_num field
+                offset += 1
 
             elif action == "send_message":
                 key = "recipient" if i == 0 else "message"
@@ -153,7 +161,7 @@ class CustomProtocol:
 
             elif action == "read_messages":
                 data_dict["limit"] = struct.unpack(">B", data[offset:offset + 1])[0]
-                offset += 1  # Move past 1-byte limit field
+                offset += 1 
 
             elif action == "delete_message":
                 if i == 0:
@@ -162,7 +170,7 @@ class CustomProtocol:
                     offset += field_size
                 else:
                     data_dict["message_id"] = struct.unpack(">I", data[offset:offset + 4])[0]
-                    offset += 4  # Move past 4-byte message_id field
+                    offset += 4
 
             elif action == "delete_account":
                 key = "password"
@@ -185,10 +193,13 @@ class CustomProtocol:
         Extract a length-prefixed field from binary data.
         Returns the extracted value and the number of bytes read.
         """
-        length = struct.unpack(">B", data[offset:offset + 1])[0]  # Read 1-byte length
+        # Read 1-byte length
+        length = struct.unpack(">B", data[offset:offset + 1])[0]
         if length == 0:
-            length = struct.unpack(">I", data[offset + 1:offset + 5])[0]  # Read 4-byte length if prefix is 0
-            offset += 4  # Move past the 4-byte length field
+            # Read 4-byte length if prefix is 0
+            length = struct.unpack(">I", data[offset + 1:offset + 5])[0] 
+            # Move past the 4-byte length field
+            offset += 4
 
         value = data[offset + 1:offset + 1 + length].decode("utf-8") if not encrypted else data[offset + 1:offset + 1 + length]
         return value, (1 + length if length < 255 else 5 + length)

@@ -24,15 +24,27 @@ This is a Python-based chat client that allows users to communicate with a serve
    ```
 
 ## Usage
-1. Start the client and enter login credentials.
-2. Use the provided buttons to send messages, read messages, list accounts, or manage the account.
+1. Start the client and enter login credentials. If the account does not exist, it will be created automatically.  
+2. Use the provided buttons to interact with the chat system:  
+   - **List Accounts**: View all registered users.  
+   - **Send Message**: Enter a recipient's username and type a message to send.  
+   - **Read Messages**: Retrieve and display the messages received.  
+   - **Delete Message**: Remove a specific message by entering its message ID.  
+   - **Delete Account**: Permanently delete your account after confirming your password.   
 3. Messages are displayed in the chat window with real-time updates.
+4. To exit, simply close the client window.  
 
 ## Known Issues
 - The GUI might freeze if the server connection is lost unexpectedly.
 - Ensure the server is running before starting the client.
 
 ## Test Coverage
+To run the tests and generate a coverage report, use the following command:
+
+```bash
+pytest --cov=. tests/
+```
+
 The test coverage statistics for the codebase are as follows:
 
 | File              | Statements | Missing | Coverage |

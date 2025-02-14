@@ -4,12 +4,11 @@ import json
 import struct
 from storage import Storage
 from protocol import CustomProtocol, JSONProtocol
-
 from argparse import ArgumentParser
 
 def parse_args():
     parser = ArgumentParser()
-    parser.add_argument("--host", default='127.0.0.1', help="Host address")
+    parser.add_argument("--host", default='0.0.0.0', help="Host address")
     parser.add_argument("--port", default=65432, help="Port number")
     parser.add_argument("--json", action="store_true", help="Use JSON protocol")
     return parser.parse_args()

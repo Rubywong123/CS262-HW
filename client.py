@@ -144,7 +144,7 @@ class ChatClient:
             action = request.pop('action_type', None)
             action = action_map[action]
             request = {"action": action, **request}
-            JSONProtocol.send(self.client, **request)
+            JSONProtocol.send(self.client, request)
         else:
             action_type = request.pop('action_type', None)
             CustomProtocol.send(self.client, action_type, **request)
