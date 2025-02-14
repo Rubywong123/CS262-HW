@@ -53,33 +53,6 @@ class Storage:
         self.cursor.execute("INSERT INTO messages (id, sender, recipient, message, status) VALUES (?, ?, ?, ?, 'unread')", (id, sender, recipient, message))
         self.conn.commit()
         return {"status": "success"}
-    
-    # def read_messages(self, username, limit=10):
-    #     # read undelivered messages
-    #     self.cursor.execute("SELECT id, sender, recipient, message FROM messages WHERE recipient=? and status='unread' ORDER BY id DESC LIMIT ?", (username, limit))
-        
-    #     messages = [{"id": row[0], "sender": row[1], "message": row[3]} for row in self.cursor.fetchall()]
-        
-    #     # mark messages as read
-    #     for message in messages:
-    #         self.cursor.execute("UPDATE messages SET status='read' WHERE id=?", (message["id"],))
-
-    #     self.conn.commit()
-
-    #     # if no undelivered messages, return a response
-
-    #     if messages:
-    #         response = {
-    #             'status': 'success',
-    #             'messages': messages
-    #         }
-    #     else:
-    #         response = {
-    #             'status': 'error',
-    #             'messages': 'No messages unread'
-    #         }
-
-    #     return response
 
     def read_messages(self, username, limit=10):
         # read undelivered messages from other senders only
