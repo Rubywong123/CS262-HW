@@ -1,8 +1,7 @@
 import socket
-import json
 import tkinter as tk
 from tkinter import scrolledtext, messagebox
-from tkinter import simpledialog
+from tkinter import simpledialog, ttk
 from protocol import JSONProtocol, CustomProtocol
 from argparse import ArgumentParser
 import threading
@@ -88,6 +87,14 @@ class ChatClient:
         self.chat_log = scrolledtext.ScrolledText(self.master, state=tk.DISABLED, height=15)
         self.chat_log.pack()
         
+        # Message limit selection
+        limit_frame = tk.Frame(self.master)
+        limit_frame.pack(pady=5)
+        tk.Label(limit_frame, text="Messages to read:").pack(side=tk.LEFT)
+        self.message_limit = ttk.Spinbox(limit_frame, from_=1, to=50, width=5)
+        self.message_limit.set(5)
+        self.message_limit.pack(side=tk.LEFT, padx=5)
+        
         tk.Button(self.master, text="List Accounts", command=self.list_accounts).pack()
         tk.Button(self.master, text="Send Message", command=self.send_message).pack()
         tk.Button(self.master, text="Read Messages", command=self.read_messages).pack()
@@ -106,21 +113,27 @@ class ChatClient:
         if response["status"] == "success":
             self.update_chat_log("Accounts: " + ", ".join(response["message"]))
     
-    # def send_message(self):
-    #     recipient = simple_input("Enter recipient username:")
-    #     message = simple_input("Enter message:")
-    #     if recipient and message:
-    #         request = {'action_type': SEND_MESSAGE, "recipient": recipient, "message": message}
-    #         self.send_request(request)
-    
-    # def read_messages(self):
-    #     request = {"action_type": READ_MESSAGES, 'limit': 5}
-    #     self.send_request(request)
-    #     response = self.check_incoming_message()
-    #     if response["status"] == "success":
-    #         for msg in response["messages"]:
-    #             self.update_chat_log(f"From {msg['sender']}: {msg['message']}")
-    
+    def send_message(self):
+        recipient = simple_input("Enter recipient username:")
+        message = simple_input("Enter message:")
+        if recipient and message:
+            request = {'action_type': SEND_MESSAGE, "recipient": recipient, "message": message}
+            self.send_request(request)
+            self.update_chat_log(f"To {recipient}: {message}")
+
+    def read_messages(self):
+        try:
+            limit = int(self.message_limit.get())
+            if limit < 1:
+                raise ValueError
+        except ValueError:
+            messagebox.showerror("Error", "Please enter a valid number of messages to read")
+            return
+            
+        request = {"action_type": READ_MESSAGES, 'limit': limit}
+        self.send_request(request)
+        self.update_chat_log(f"[System] Reading up to {limit} unread messages from other users...")
+
     def delete_message(self):
         message_id = simple_input("Enter message ID to delete:")
         if message_id:
@@ -148,20 +161,6 @@ class ChatClient:
         else:
             action_type = request.pop('action_type', None)
             CustomProtocol.send(self.client, action_type, **request)
-
-    # def listen_for_messages(self):
-    #     while True:
-    #         try:
-    #             response = JSONProtocol.receive(self.client) if self.args.json else CustomProtocol.receive(self.client)
-    #             if response:
-    #                 # Extract message only if response contains 'status' and 'message'
-    #                 if response.get("status") == "New message" and "message" in response:
-    #                     self.update_chat_log(response["message"])  # Show only the message
-    #                 else:
-    #                     self.update_chat_log(f"[Server]: {response}")  # Default logging
-    #         except Exception as e:
-    #             self.update_chat_log("[Error]: Disconnected from server.")
-    #             break
 
     def listen_for_messages(self):
         while True:
@@ -197,20 +196,6 @@ class ChatClient:
                 print(f"Error in listen_for_messages: {e}")
                 self.update_chat_log(f"[Error]: Disconnected from server. {str(e)}")
                 break
-
-    def send_message(self):
-        recipient = simple_input("Enter recipient username:")
-        message = simple_input("Enter message:")
-        if recipient and message:
-            request = {'action_type': SEND_MESSAGE, "recipient": recipient, "message": message}
-            self.send_request(request)
-            # Add a local echo of the sent message
-            self.update_chat_log(f"To {recipient}: {message}")
-
-    def read_messages(self):
-        request = {"action_type": READ_MESSAGES, 'limit': 5}
-        self.send_request(request)
-
     
     def check_incoming_message(self):
         time.sleep(1)
