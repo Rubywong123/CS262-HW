@@ -9,6 +9,7 @@ service ChatService {
   rpc ReadMessages(ReadMessagesRequest) returns (ReadMessagesResponse);
   rpc DeleteMessage(DeleteMessageRequest) returns (Response);
   rpc DeleteAccount(DeleteAccountRequest) returns (Response);
+  rpc ListenForMessages(ListenForMessagesRequest) returns (stream Message);
 }
 
 message LoginRequest {
@@ -25,8 +26,9 @@ message ListAccountsResponse {
 }
 
 message SendMessageRequest {
-  string recipient = 1;
-  string message = 2;
+  string username = 1;
+  string recipient = 2;
+  string message = 3;
 }
 
 message ReadMessagesRequest {
@@ -45,12 +47,17 @@ message Message {
 }
 
 message DeleteMessageRequest {
-  int32 message_id = 1;
+  string username = 1;
+  int32 message_id = 2;
 }
 
 message DeleteAccountRequest {
   string username = 1;
   string password = 2;
+}
+
+message ListenForMessagesRequest {
+  string username = 1;
 }
 
 message Response {
