@@ -4,12 +4,13 @@ import chat_pb2_grpc
 import threading
 
 def listen_for_messages(stub, username):
-    """ Background thread that listens for incoming messages. """
+    """ Background thread that listens for real-time messages. """
     try:
         for message in stub.ListenForMessages(chat_pb2.ListenForMessagesRequest(username=username)):
             print(f"\n[New Message] {message.sender}: {message.message}\n")
     except grpc.RpcError as e:
         print(f"[Server disconnected]: {e}")
+        exit()
 
 def run():
     channel = grpc.insecure_channel("localhost:50051")
@@ -57,8 +58,9 @@ def run():
                 print(f"From {msg.sender}: {msg.message}")
 
         elif choice == "4":
+            recipient = input("Recipient username: ")
             message_id = int(input("Enter message ID to delete: "))
-            response = stub.DeleteMessage(chat_pb2.DeleteMessageRequest(username=username, message_id=message_id))
+            response = stub.DeleteMessage(chat_pb2.DeleteMessageRequest(username=username, recipient=recipient, message_id=message_id))
             print(response.status, response.message)
 
         elif choice == "5":

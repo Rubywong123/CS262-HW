@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-package chat;
-
 service ChatService {
   rpc Login(LoginRequest) returns (Response);
   rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse);
@@ -37,7 +35,8 @@ message ReadMessagesRequest {
 }
 
 message ReadMessagesResponse {
-  repeated Message messages = 1;
+  string status = 1;
+  repeated Message messages = 2;
 }
 
 message Message {
@@ -48,7 +47,8 @@ message Message {
 
 message DeleteMessageRequest {
   string username = 1;
-  int32 message_id = 2;
+  string recipient = 2;
+  int32 message_id = 3;
 }
 
 message DeleteAccountRequest {

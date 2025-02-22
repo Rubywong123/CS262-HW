@@ -4,16 +4,17 @@ import time
 import chat_pb2
 import chat_pb2_grpc
 from storage import Storage
+import queue
 
 class ChatService(chat_pb2_grpc.ChatServiceServicer):
     def __init__(self):
         self.storage = Storage("data.db")
-        self.online_users = {}  # Track online users (username -> response stream)
+        self.online_users = {}  # username -> queue of messages
 
     def Login(self, request, context):
         response = self.storage.login_register_user(request.username, request.password)
         if response["status"] == "success":
-            self.online_users[request.username] = context  # Store user session
+            self.online_users[request.username] = queue.Queue()  # Use thread-safe Queue
         return chat_pb2.Response(status=response["status"], message=response.get("message", ""))
 
     def SendMessage(self, request, context):
@@ -21,25 +22,28 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         recipient = request.recipient
         message = request.message
 
-        # If recipient is online, send the message immediately
         if recipient in self.online_users:
             try:
-                print(f"Delivering message to online user {recipient}")
-                return chat_pb2.Response(status="success", message="Message delivered immediately.")
-            except grpc.RpcError:
-                del self.online_users[recipient]  # Remove disconnected users
+                self.online_users[recipient].put(chat_pb2.Message(id=int(time.time()), sender=sender, message=message))
+                self.storage.send_message(sender, recipient, message, status='read')
+                return chat_pb2.Response(status="success", message="Message delivered in real-time.")
+            except queue.Full:
+                pass  # If the queue is full, fallback to storing
 
-        # Store the message for offline retrieval
         self.storage.send_message(sender, recipient, message)
-        print(f"Message stored for offline user {recipient}")
-
         return chat_pb2.Response(status="success", message="Message stored for later delivery.")
 
+    
+    def ListAccounts(self, request, context):
+        response = self.storage.list_accounts(request.page_num)
+        return chat_pb2.ListAccountsResponse(usernames=response["message"])
 
 
     def ReadMessages(self, request, context):
         messages = self.storage.read_messages(request.username, request.limit)
+        
         return chat_pb2.ReadMessagesResponse(
+            status=messages["status"],
             messages=[
                 chat_pb2.Message(id=msg["id"], sender=msg["sender"], message=msg["message"])
                 for msg in messages.get("messages", [])
@@ -47,22 +51,25 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         )
 
     def ListenForMessages(self, request, context):
-        """ Streaming RPC: Sends messages to online users in real-time """
+        """ Streams new messages in real-time using a thread-safe Queue. """
         username = request.username
+        if username not in self.online_users:
+            context.abort(grpc.StatusCode.NOT_FOUND, "User not logged in")
+
+        q = self.online_users[username]
+
         while True:
-            if username in self.online_users:
-                try:
-                    messages = self.storage.read_messages(username, 10).get("messages", [])
-                    for msg in messages:
-                        yield chat_pb2.Message(id=msg["id"], sender=msg["sender"], message=msg["message"])
-                    
-                    time.sleep(2)  # Poll every 2 seconds
-                except grpc.RpcError:
-                    del self.online_users[username]  # Remove disconnected users
-                    break
+            try:
+                message = q.get(timeout=10)  # Block until a message arrives
+                yield message  # Stream the message to the client
+            except queue.Empty:
+                pass  # Continue waiting for new messages
+            except grpc.RpcError:
+                del self.online_users[username]  # Remove disconnected users
+                break
 
     def DeleteMessage(self, request, context):
-        response = self.storage.delete_message(request.username, request.message_id)
+        response = self.storage.delete_message(request.username, request.recipient, request.message_id)
         return chat_pb2.Response(status=response["status"], message=response.get("message", ""))
 
     def DeleteAccount(self, request, context):
