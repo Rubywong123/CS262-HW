@@ -80,7 +80,7 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
                 break
 
     def DeleteMessage(self, request, context):
-        response = self.storage.delete_message(request.username, request.recipient, request.message_id)
+        response = self.storage.delete_message(request.username, request.recipient)
         return chat_pb2.Response(status=response["status"], message=response.get("message", ""))
 
     def DeleteAccount(self, request, context):

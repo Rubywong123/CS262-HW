@@ -59,6 +59,9 @@ class ChatGUI:
         """Display the main chat interface with proper placeholder text behavior."""
         self.clear_window()
 
+        # change the title into "Chat App - [username]"
+        self.root.title(f"Chat App - {self.username}")
+
         self.chat_display = scrolledtext.ScrolledText(self.root, width=50, height=20, state=tk.DISABLED)
         self.chat_display.pack()
 
@@ -85,7 +88,7 @@ class ChatGUI:
         list_accounts_button = tk.Button(self.root, text="List Accounts", command=self.list_accounts)
         list_accounts_button.pack()
 
-        delete_message_button = tk.Button(self.root, text="Delete Message", command=self.delete_message)
+        delete_message_button = tk.Button(self.root, text="Delete Most Recent Message With ...", command=self.delete_message)
         delete_message_button.pack()
 
         delete_account_button = tk.Button(self.root, text="Delete Account", command=self.delete_account)
@@ -153,15 +156,14 @@ class ChatGUI:
         messagebox.showinfo("Accounts", "\n".join(response.usernames))
 
     def delete_message(self):
-        """Delete a message by ID."""
+        """Delete Most recent message, given the recipient."""
         try:
             recipient = simpledialog.askstring("Input", "Enter recipient username:")
-            message_id = simpledialog.askinteger("Input", "Enter message ID to delete:")
 
-            if not recipient or message_id is None:
+            if not recipient:
                 return
 
-            response = self.stub.DeleteMessage(chat_pb2.DeleteMessageRequest(username=self.username, recipient=recipient, message_id=message_id))
+            response = self.stub.DeleteMessage(chat_pb2.DeleteMessageRequest(username=self.username, recipient=recipient))
             messagebox.showinfo("Delete Status", response.message)
         except Exception as e:
             messagebox.showerror("Error", str(e))

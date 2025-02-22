@@ -90,9 +90,12 @@ class Storage:
             messages = [{"id": -1, "sender": "System", "message": "No unread messages from other users"}]
             return {"status": "error", "messages": messages}
 
-    def delete_message(self, username, recipient, message_id):
-        """Deletes a message if the sender is the current user."""
+    def delete_message(self, username, recipient):
+        """Deletes the most recent message if the sender is the current user."""
         try:
+            sql = " SELECT id FROM messages WHERE recipient=? AND sender=? ORDER BY id DESC LIMIT 1"
+            cursor = self.execute_query(sql, (recipient, username))
+            message_id = cursor.fetchone()[0]
             self.execute_query("DELETE FROM messages WHERE id=? AND sender=? AND recipient=?", 
                                (int(message_id), username, recipient), commit=True)
             return {"status": "success"}

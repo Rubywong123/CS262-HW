@@ -48,7 +48,6 @@ message Message {
 message DeleteMessageRequest {
   string username = 1;
   string recipient = 2;
-  int32 message_id = 3;
 }
 
 message DeleteAccountRequest {

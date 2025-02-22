@@ -71,8 +71,7 @@ def run():
 
         elif choice == "4":
             recipient = input("Recipient username: ")
-            message_id = int(input("Enter message ID to delete: "))
-            response = stub.DeleteMessage(chat_pb2.DeleteMessageRequest(username=username, recipient=recipient, message_id=message_id))
+            response = stub.DeleteMessage(chat_pb2.DeleteMessageRequest(username=username, recipient=recipient))
             print(response.status, response.message)
 
         elif choice == "5":
