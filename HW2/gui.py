@@ -10,6 +10,7 @@ class ChatGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Chat App")
+        
 
         # gRPC channel and stub
         self.channel = grpc.insecure_channel("localhost:50051")
@@ -17,12 +18,16 @@ class ChatGUI:
         self.username = None
         self.password = None
 
+        # add procedure to handle window close event
+        self.root.protocol("WM_DELETE_WINDOW", self.handle_close)
+
         # Show login screen first
         self.show_login_window()
 
     def show_login_window(self):
         """Display login screen."""
         self.clear_window()
+        self.root.title("Chat App")
 
         tk.Label(self.root, text="Username:").pack()
         self.username_entry = tk.Entry(self.root)
@@ -32,7 +37,7 @@ class ChatGUI:
         self.password_entry = tk.Entry(self.root, show="*")
         self.password_entry.pack()
 
-        login_button = tk.Button(self.root, text="Login", command=self.login)
+        login_button = tk.Button(self.root, text="Login / Register", command=self.login)
         login_button.pack()
 
     def login(self):
@@ -94,6 +99,8 @@ class ChatGUI:
         delete_account_button = tk.Button(self.root, text="Delete Account", command=self.delete_account)
         delete_account_button.pack()
 
+        logout_button = tk.Button(self.root, text="Logout", command=self.logout)
+        logout_button.pack()
 
     def on_focus_in(self, entry, placeholder):
         """Remove placeholder text and change color to black when user clicks the field."""
@@ -191,10 +198,29 @@ class ChatGUI:
         self.chat_display.insert(tk.END, msg)
         self.chat_display.config(state=tk.DISABLED)
 
+    def logout(self):
+        """Logout the user and display the login screen."""
+        response = self.stub.Logout(chat_pb2.LogoutRequest(username=self.username))
+        if response.status == "success":
+            self.show_login_window()
+        else:
+            messagebox.showerror("Error", response.message)
+
     def clear_window(self):
         """Clear all widgets in the window."""
         for widget in self.root.winfo_children():
             widget.destroy()
+
+    def handle_close(self):
+        """Handles the window close event by sending a logout request before exiting."""
+        if self.username:
+            try:
+                self.stub.Logout(chat_pb2.LogoutRequest(username=self.username))
+            except grpc.RpcError:
+                pass  # Ignore errors if the server is unreachable
+
+        self.channel.close()  # Properly close the gRPC channel
+        self.root.destroy()  # Close the Tkinter window
 
 
 if __name__ == "__main__":

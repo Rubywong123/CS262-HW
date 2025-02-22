@@ -17,6 +17,10 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         if response["status"] == "success":
             self.online_users[request.username] = queue.Queue()
         return chat_pb2.Response(status=response["status"], message=response.get("message", ""))
+    
+    def Logout(self, request, context):
+        self.online_users.pop(request.username, None)
+        return chat_pb2.Response(status="success", message="User logged out.")
 
     def SendMessage(self, request, context):
         sender = request.username

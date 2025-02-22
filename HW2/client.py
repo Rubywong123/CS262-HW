@@ -80,10 +80,17 @@ def run():
                 response = stub.DeleteAccount(chat_pb2.DeleteAccountRequest(username=username, password=password))
                 print(response.status, response.message)
                 if response.status == "success":
-                    break
+                    # send logout request
+                    response = stub.Logout(chat_pb2.LogoutRequest(username=username))
+                    if response.status == "success":
+                        print("Logged out successfully.")
+                        break
 
         elif choice == "6":
-            break
+            response = stub.Logout(chat_pb2.LogoutRequest(username=username))
+            if response.status == "success":
+                print("Logged out successfully.")
+                break
 
 if __name__ == "__main__":
     run()
