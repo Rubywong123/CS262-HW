@@ -34,10 +34,10 @@ class ChatServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Authenticate = channel.unary_unary(
-                '/chat.ChatService/Authenticate',
-                request_serializer=chat__pb2.AuthRequest.SerializeToString,
-                response_deserializer=chat__pb2.AuthResponse.FromString,
+        self.Login = channel.unary_unary(
+                '/chat.ChatService/Login',
+                request_serializer=chat__pb2.LoginRequest.SerializeToString,
+                response_deserializer=chat__pb2.Response.FromString,
                 _registered_method=True)
         self.ListAccounts = channel.unary_unary(
                 '/chat.ChatService/ListAccounts',
@@ -47,7 +47,7 @@ class ChatServiceStub(object):
         self.SendMessage = channel.unary_unary(
                 '/chat.ChatService/SendMessage',
                 request_serializer=chat__pb2.SendMessageRequest.SerializeToString,
-                response_deserializer=chat__pb2.StatusResponse.FromString,
+                response_deserializer=chat__pb2.Response.FromString,
                 _registered_method=True)
         self.ReadMessages = channel.unary_unary(
                 '/chat.ChatService/ReadMessages',
@@ -57,68 +57,61 @@ class ChatServiceStub(object):
         self.DeleteMessage = channel.unary_unary(
                 '/chat.ChatService/DeleteMessage',
                 request_serializer=chat__pb2.DeleteMessageRequest.SerializeToString,
-                response_deserializer=chat__pb2.StatusResponse.FromString,
+                response_deserializer=chat__pb2.Response.FromString,
                 _registered_method=True)
         self.DeleteAccount = channel.unary_unary(
                 '/chat.ChatService/DeleteAccount',
                 request_serializer=chat__pb2.DeleteAccountRequest.SerializeToString,
-                response_deserializer=chat__pb2.StatusResponse.FromString,
+                response_deserializer=chat__pb2.Response.FromString,
                 _registered_method=True)
-        self.StreamMessages = channel.unary_stream(
-                '/chat.ChatService/StreamMessages',
-                request_serializer=chat__pb2.StreamRequest.SerializeToString,
-                response_deserializer=chat__pb2.ChatMessage.FromString,
+        self.ListenForMessages = channel.unary_stream(
+                '/chat.ChatService/ListenForMessages',
+                request_serializer=chat__pb2.ListenForMessagesRequest.SerializeToString,
+                response_deserializer=chat__pb2.Message.FromString,
                 _registered_method=True)
 
 
 class ChatServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def Authenticate(self, request, context):
-        """Create/login account
-        """
+    def Login(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ListAccounts(self, request, context):
-        """List accounts
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SendMessage(self, request, context):
-        """Send message
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ReadMessages(self, request, context):
-        """Read messages
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def DeleteMessage(self, request, context):
-        """Delete message
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def DeleteAccount(self, request, context):
-        """Delete account
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def StreamMessages(self, request, context):
-        """Stream for receiving real-time messages
-        """
+    def ListenForMessages(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -126,10 +119,10 @@ class ChatServiceServicer(object):
 
 def add_ChatServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Authenticate': grpc.unary_unary_rpc_method_handler(
-                    servicer.Authenticate,
-                    request_deserializer=chat__pb2.AuthRequest.FromString,
-                    response_serializer=chat__pb2.AuthResponse.SerializeToString,
+            'Login': grpc.unary_unary_rpc_method_handler(
+                    servicer.Login,
+                    request_deserializer=chat__pb2.LoginRequest.FromString,
+                    response_serializer=chat__pb2.Response.SerializeToString,
             ),
             'ListAccounts': grpc.unary_unary_rpc_method_handler(
                     servicer.ListAccounts,
@@ -139,7 +132,7 @@ def add_ChatServiceServicer_to_server(servicer, server):
             'SendMessage': grpc.unary_unary_rpc_method_handler(
                     servicer.SendMessage,
                     request_deserializer=chat__pb2.SendMessageRequest.FromString,
-                    response_serializer=chat__pb2.StatusResponse.SerializeToString,
+                    response_serializer=chat__pb2.Response.SerializeToString,
             ),
             'ReadMessages': grpc.unary_unary_rpc_method_handler(
                     servicer.ReadMessages,
@@ -149,17 +142,17 @@ def add_ChatServiceServicer_to_server(servicer, server):
             'DeleteMessage': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteMessage,
                     request_deserializer=chat__pb2.DeleteMessageRequest.FromString,
-                    response_serializer=chat__pb2.StatusResponse.SerializeToString,
+                    response_serializer=chat__pb2.Response.SerializeToString,
             ),
             'DeleteAccount': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteAccount,
                     request_deserializer=chat__pb2.DeleteAccountRequest.FromString,
-                    response_serializer=chat__pb2.StatusResponse.SerializeToString,
+                    response_serializer=chat__pb2.Response.SerializeToString,
             ),
-            'StreamMessages': grpc.unary_stream_rpc_method_handler(
-                    servicer.StreamMessages,
-                    request_deserializer=chat__pb2.StreamRequest.FromString,
-                    response_serializer=chat__pb2.ChatMessage.SerializeToString,
+            'ListenForMessages': grpc.unary_stream_rpc_method_handler(
+                    servicer.ListenForMessages,
+                    request_deserializer=chat__pb2.ListenForMessagesRequest.FromString,
+                    response_serializer=chat__pb2.Message.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -173,7 +166,7 @@ class ChatService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def Authenticate(request,
+    def Login(request,
             target,
             options=(),
             channel_credentials=None,
@@ -186,9 +179,9 @@ class ChatService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/chat.ChatService/Authenticate',
-            chat__pb2.AuthRequest.SerializeToString,
-            chat__pb2.AuthResponse.FromString,
+            '/chat.ChatService/Login',
+            chat__pb2.LoginRequest.SerializeToString,
+            chat__pb2.Response.FromString,
             options,
             channel_credentials,
             insecure,
@@ -242,7 +235,7 @@ class ChatService(object):
             target,
             '/chat.ChatService/SendMessage',
             chat__pb2.SendMessageRequest.SerializeToString,
-            chat__pb2.StatusResponse.FromString,
+            chat__pb2.Response.FromString,
             options,
             channel_credentials,
             insecure,
@@ -296,7 +289,7 @@ class ChatService(object):
             target,
             '/chat.ChatService/DeleteMessage',
             chat__pb2.DeleteMessageRequest.SerializeToString,
-            chat__pb2.StatusResponse.FromString,
+            chat__pb2.Response.FromString,
             options,
             channel_credentials,
             insecure,
@@ -323,7 +316,7 @@ class ChatService(object):
             target,
             '/chat.ChatService/DeleteAccount',
             chat__pb2.DeleteAccountRequest.SerializeToString,
-            chat__pb2.StatusResponse.FromString,
+            chat__pb2.Response.FromString,
             options,
             channel_credentials,
             insecure,
@@ -335,7 +328,7 @@ class ChatService(object):
             _registered_method=True)
 
     @staticmethod
-    def StreamMessages(request,
+    def ListenForMessages(request,
             target,
             options=(),
             channel_credentials=None,
@@ -348,9 +341,9 @@ class ChatService(object):
         return grpc.experimental.unary_stream(
             request,
             target,
-            '/chat.ChatService/StreamMessages',
-            chat__pb2.StreamRequest.SerializeToString,
-            chat__pb2.ChatMessage.FromString,
+            '/chat.ChatService/ListenForMessages',
+            chat__pb2.ListenForMessagesRequest.SerializeToString,
+            chat__pb2.Message.FromString,
             options,
             channel_credentials,
             insecure,
