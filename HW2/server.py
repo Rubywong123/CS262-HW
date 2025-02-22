@@ -4,7 +4,7 @@ import time
 import chat_pb2
 import chat_pb2_grpc
 from storage import Storage
-from queue import Queue
+from queue import Queue, Empty
 
 class ChatService(chat_pb2_grpc.ChatServiceServicer):
     def __init__(self):
@@ -22,16 +22,11 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         recipient = request.recipient
         message = request.message
 
-        # If recipient is online, push message to their queue
-        if recipient in self.online_users:
-            if isinstance(self.online_users[recipient], Queue):  # Ensure it's a queue
-                self.online_users[recipient].put({"sender": sender, "message": message})
-                print(f"Real-time message delivered to {recipient}")
-                return chat_pb2.Response(status="success", message="Message delivered in real-time.")
-            else:
-                print(f"Error: {recipient} is registered incorrectly in online_users!")
+        if recipient in self.online_users and isinstance(self.online_users[recipient], Queue):
+            self.online_users[recipient].put({"sender": sender, "message": message})
+            print(f"Real-time message delivered to {recipient}")
+            return chat_pb2.Response(status="success", message="Message delivered in real-time.")
 
-        # Otherwise, store the message for offline retrieval
         self.storage.send_message(sender, recipient, message)
         print(f"Message stored for offline user {recipient}")
 
@@ -52,15 +47,22 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         """ Streaming RPC: Sends real-time messages to online users using a queue. """
         username = request.username
 
-        if username not in self.online_users:
-            self.online_users[username] = Queue()  # Ensure it is always a queue
+        # Ensure the user is assigned a queue, not a context object
+        if username not in self.online_users or not isinstance(self.online_users[username], Queue):
+            self.online_users[username] = Queue()  # Always store a Queue
 
-        while True:
-            try:
-                message = self.online_users[username].get(timeout=10)  # Wait for a message
-                yield chat_pb2.Message(id=-1, sender=message["sender"], message=message["message"])
-            except Exception:
-                continue  # No new messages, keep waiting
+        print(f"{username} is now listening for messages...")
+
+        try:
+            while True:
+                try:
+                    message = self.online_users[username].get(timeout=10)  # Get message from queue
+                    yield chat_pb2.Message(id=-1, sender=message["sender"], message=message["message"])
+                except Empty:
+                    continue  # No new messages yet, keep waiting
+        except grpc.RpcError:
+            print(f"{username} has disconnected.")
+            del self.online_users[username]  # Remove user from online list when they disconnect
 
     def DeleteMessage(self, request, context):
         response = self.storage.delete_message(request.username, request.message_id)
