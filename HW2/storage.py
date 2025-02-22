@@ -69,7 +69,12 @@ class Storage:
         return {"status": "success"}
 
     def read_messages(self, username, limit=10):
-        """Retrieves unread messages for a user."""
+        """Retrieves unread messages for a user within the specified limit (0-10)."""
+        limit = max(0, min(limit, 10))
+
+        if limit == 0:
+            return {"status": "success", "messages": []}
+
         cursor = self.execute_query("""
             SELECT id, sender, recipient, message 
             FROM messages 
@@ -85,10 +90,8 @@ class Storage:
             for message in messages:
                 self.execute_query("UPDATE messages SET status='read' WHERE id=?", (message["id"],), commit=True)
 
-            return {"status": "success", "messages": messages}
-        else:
-            messages = [{"id": -1, "sender": "System", "message": "No unread messages from other users"}]
-            return {"status": "error", "messages": messages}
+        return {"status": "success", "messages": messages}
+
 
     def delete_message(self, username, recipient, message_id):
         """Deletes a message if the sender is the current user."""

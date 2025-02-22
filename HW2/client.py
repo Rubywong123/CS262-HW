@@ -28,7 +28,6 @@ def run():
 
     print("Login successful! Listening for new messages...")
     
-    # Start listening for messages in a background thread
     threading.Thread(target=listen_for_messages, args=(stub, username), daemon=True).start()
 
     while True:
@@ -53,9 +52,22 @@ def run():
             print(response.status, response.message)
 
         elif choice == "3":
-            response = stub.ReadMessages(chat_pb2.ReadMessagesRequest(username=username, limit=10))
-            for msg in response.messages:
-                print(f"From {msg.sender}: {msg.message}")
+            try:
+                limit = int(input("Enter the number of messages to retrieve (0-10): "))
+                if limit < 0 or limit > 10:
+                    print("Please enter a number between 0 and 10.")
+                    continue
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
+                continue
+
+            response = stub.ReadMessages(chat_pb2.ReadMessagesRequest(username=username, limit=limit))
+
+            if response.messages:
+                for msg in response.messages:
+                    print(f"From {msg.sender}: {msg.message}")
+            else:
+                print("No messages found.")
 
         elif choice == "4":
             recipient = input("Recipient username: ")

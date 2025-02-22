@@ -15,7 +15,7 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
     def Login(self, request, context):
         response = self.storage.login_register_user(request.username, request.password)
         if response["status"] == "success":
-            self.online_users[request.username] = queue.Queue()  # Use thread-safe Queue
+            self.online_users[request.username] = queue.Queue()
         return chat_pb2.Response(status=response["status"], message=response.get("message", ""))
 
     def SendMessage(self, request, context):
@@ -30,7 +30,7 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
                 self.storage.send_message(sender, recipient, message, status='read')
                 return chat_pb2.Response(status="success", message="Message delivered in real-time.")
             except queue.Full:
-                pass  # If the queue is full, fallback to storing
+                pass
 
         self.storage.send_message(sender, recipient, message)
         return chat_pb2.Response(status="success", message="Message stored for later delivery.")
@@ -42,8 +42,16 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
 
     def ReadMessages(self, request, context):
         """ Fetch unread messages only when the user explicitly requests them. """
-        messages = self.storage.read_messages(request.username, request.limit)
-        
+        limit = max(0, min(request.limit, 10))
+
+        if limit == 0:
+            return chat_pb2.ReadMessagesResponse(
+                status="success",
+                messages=[] 
+            )
+
+        messages = self.storage.read_messages(request.username, limit)
+
         return chat_pb2.ReadMessagesResponse(
             status=messages["status"],
             messages=[
@@ -51,6 +59,7 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
                 for msg in messages.get("messages", [])
             ]
         )
+
 
     def ListenForMessages(self, request, context):
         """ Streams new messages in real-time using a thread-safe Queue. """
@@ -62,8 +71,8 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
 
         while True:
             try:
-                message = q.get(timeout=10)  # Block until a message arrives
-                yield message  # Stream the message to the client
+                message = q.get(timeout=10) 
+                yield message
             except queue.Empty:
                 pass  # Continue waiting for new messages
             except grpc.RpcError:
