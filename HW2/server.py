@@ -5,6 +5,7 @@ import chat_pb2
 import chat_pb2_grpc
 from storage import Storage
 import queue
+from queue import Queue
 
 class ChatService(chat_pb2_grpc.ChatServiceServicer):
     def __init__(self):
@@ -22,9 +23,10 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         recipient = request.recipient
         message = request.message
 
-        if recipient in self.online_users:
+        if recipient in self.online_users and isinstance(self.online_users[recipient], Queue):
             try:
                 self.online_users[recipient].put(chat_pb2.Message(id=int(time.time()), sender=sender, message=message))
+                print(f"Real-time message delivered to {recipient}")
                 self.storage.send_message(sender, recipient, message, status='read')
                 return chat_pb2.Response(status="success", message="Message delivered in real-time.")
             except queue.Full:
@@ -38,8 +40,8 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         response = self.storage.list_accounts(request.page_num)
         return chat_pb2.ListAccountsResponse(usernames=response["message"])
 
-
     def ReadMessages(self, request, context):
+        """ Fetch unread messages only when the user explicitly requests them. """
         messages = self.storage.read_messages(request.username, request.limit)
         
         return chat_pb2.ReadMessagesResponse(
