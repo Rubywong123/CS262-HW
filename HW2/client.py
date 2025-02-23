@@ -2,6 +2,13 @@ import grpc
 import chat_pb2
 import chat_pb2_grpc
 import threading
+from argparse import ArgumentParser
+
+def parse_args():
+    parser = ArgumentParser()
+    parser.add_argument("--host", default='127.0.0.1', help="Host address")
+    parser.add_argument("--port", default=50051, help="Port number")
+    return parser.parse_args()
 
 def listen_for_messages(stub, username):
     """ Background thread that listens for real-time messages. """
@@ -12,8 +19,8 @@ def listen_for_messages(stub, username):
         print(f"[Server disconnected]: {e}")
         exit()
 
-def run():
-    channel = grpc.insecure_channel("localhost:50051")
+def run(args):
+    channel = grpc.insecure_channel(f"{args.host}:{args.port}")
     stub = chat_pb2_grpc.ChatServiceStub(channel)
 
     print("Welcome to the Chat App!")
@@ -93,4 +100,6 @@ def run():
                 break
 
 if __name__ == "__main__":
-    run()
+    args = parse_args()
+
+    run(args)

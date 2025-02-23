@@ -4,16 +4,22 @@ import threading
 import chat_pb2
 import chat_pb2_grpc
 import grpc
+from argparse import ArgumentParser
 
+def parse_args():
+    parser = ArgumentParser()
+    parser.add_argument("--host", default='127.0.0.1', help="Host address")
+    parser.add_argument("--port", default=50051, help="Port number")
+    return parser.parse_args()
 
 class ChatGUI:
-    def __init__(self, root):
+    def __init__(self, root, args):
         self.root = root
         self.root.title("Chat App")
         
 
         # gRPC channel and stub
-        self.channel = grpc.insecure_channel("localhost:50051")
+        self.channel = grpc.insecure_channel(f"{args.host}:{args.port}")
         self.stub = chat_pb2_grpc.ChatServiceStub(self.channel)
         self.username = None
         self.password = None
@@ -224,6 +230,7 @@ class ChatGUI:
 
 
 if __name__ == "__main__":
+    args = parse_args()
     root = tk.Tk()
-    app = ChatGUI(root)
+    app = ChatGUI(root, args)
     root.mainloop()
