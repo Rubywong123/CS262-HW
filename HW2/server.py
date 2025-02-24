@@ -6,6 +6,7 @@ import chat_pb2_grpc
 from storage import Storage
 import queue
 from queue import Queue
+import sys
 
 class ChatService(chat_pb2_grpc.ChatServiceServicer):
     def __init__(self):
@@ -27,6 +28,11 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         recipient = request.recipient
         message = request.message
 
+        # record message size (to compare with the wire protocol design)
+        request_size = sys.getsizeof(request.SerializeToString())
+        print(f"Received request size: {request_size} bytes")
+
+
         if recipient in self.online_users and isinstance(self.online_users[recipient], Queue):
             try:
                 self.online_users[recipient].put(chat_pb2.Message(id=int(time.time()), sender=sender, message=message))
@@ -45,7 +51,6 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         return chat_pb2.ListAccountsResponse(usernames=response["message"])
 
     def ReadMessages(self, request, context):
-        """ Fetch unread messages only when the user explicitly requests them. """
         limit = max(0, min(request.limit, 10))
 
         if limit == 0:
@@ -66,7 +71,7 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
 
 
     def ListenForMessages(self, request, context):
-        """ Streams new messages in real-time using a thread-safe Queue. """
+        """ Streams new messages in real-time using a Queue. """
         username = request.username
         if username not in self.online_users:
             context.abort(grpc.StatusCode.NOT_FOUND, "User not logged in")
@@ -96,7 +101,7 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     chat_pb2_grpc.add_ChatServiceServicer_to_server(ChatService(), server)
-    server.add_insecure_port("[::]:50051")
+    server.add_insecure_port("0.0.0.0:50051")
     print("Starting gRPC server on port 50051...")
     server.start()
     try:
