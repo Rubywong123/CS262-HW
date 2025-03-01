@@ -21,12 +21,12 @@ class Message:
 class VirtualMachine:
     def __init__(self, id, peers):
         self.id = id
-        self.clock_speed = random.randint(1, 6)  # Ticks per second
+        self.clock_speed = random.randint(1, 6)
         self.logical_clock = 0
         self.message_queue = []
         self.peers = peers
-        self.peer_for_action_1 = peers[0] if peers else None
-        self.peer_for_action_2 = peers[1] if len(peers) > 1 else peers[0] if peers else None
+        self.peer_for_action_1 = peers[0]
+        self.peer_for_action_2 = peers[1]
         self.log_file = open(f'logs/machine_{id}.log', 'w')
         self.running = True
         
@@ -39,7 +39,8 @@ class VirtualMachine:
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(("localhost", 5000 + self.id))
         server.listen(5)
-        server.settimeout(1)  # Allow the loop to check `self.running` periodically
+        # check running status periodically
+        server.settimeout(1)
         while self.running:
             try:
                 conn, addr = server.accept()
@@ -48,8 +49,9 @@ class VirtualMachine:
                     self.message_queue.append(Message.from_json(data))
                 conn.close()
             except socket.timeout:
-                continue  # Timeout allows loop to check `self.running`
-        server.close()  # Close socket when stopping
+                # Timeout to check the running status
+                continue
+        server.close()
 
 
     def send_message(self, target_id):
@@ -68,15 +70,17 @@ class VirtualMachine:
         log_entry = f"{timestamp} - Machine {self.id}: {entry}\n"
         if not self.log_file.closed:
             self.log_file.write(log_entry)
-        print(log_entry.strip())  # Print output remains unaffected
+        print(log_entry.strip())
 
     def run(self):
         while self.running:
             time.sleep(1 / self.clock_speed)
+            # check for new messages
             if self.message_queue:
                 message = self.message_queue.pop(0)
                 self.process_message(message)
             else:
+                # Perform internal event or send message
                 action = random.randint(1, 10)
                 if action == 1 and self.peer_for_action_1 is not None:
                     self.send_message(self.peer_for_action_1)
@@ -103,10 +107,14 @@ if __name__ == "__main__":
     for thread in threads:
         thread.start()
     
-    time.sleep(60)  # Run for 60 seconds
+    time.sleep(60)
     
     for machine in machines:
+        # stop the machine and close the log file
+        # avoid improper closing
         machine.running = False
         machine.log_file.close()
+    
+    # wait for threads to finish
     for thread in threads:
         thread.join()
