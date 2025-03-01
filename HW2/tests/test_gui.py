@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 import grpc
 import chat_pb2
 from gui import ChatGUI
+from argparse import Namespace
 
 class MockResponse:
     """Mock gRPC response object"""
@@ -69,6 +70,11 @@ class MockStub:
         yield MockMessage()
 
 @pytest.fixture
+def mock_args():
+    """Fixture for command line arguments"""
+    return Namespace(host='127.0.0.1', port=50051)
+
+@pytest.fixture
 def root():
     """Fixture for tkinter root window"""
     root = tk.Tk()
@@ -81,11 +87,11 @@ def mock_stub():
     return MockStub()
 
 @pytest.fixture
-def chat_gui(root, mock_stub):
+def chat_gui(root, mock_stub, mock_args):
     """Fixture for ChatGUI instance"""
     with patch('grpc.insecure_channel'), \
          patch('chat_pb2_grpc.ChatServiceStub', return_value=mock_stub):
-        gui = ChatGUI(root)
+        gui = ChatGUI(root, mock_args)
         root.update()
         yield gui
 
@@ -196,13 +202,12 @@ def test_delete_account_cancelled(chat_gui, mock_stub):
 def test_logout(chat_gui, mock_stub):
     """Test logout functionality"""
     chat_gui.username = "testuser"
-    chat_gui.show_chat_window()  # Show chat window first
+    chat_gui.show_chat_window()
     
     with patch('tkinter.messagebox.showinfo') as mock_info:
         chat_gui.logout()
         
     assert mock_stub.logout_called
-    # Check if we're back to login window
     assert any(isinstance(widget, tk.Entry) for widget in chat_gui.root.winfo_children())
 
 def test_handle_close(chat_gui, mock_stub):
@@ -220,12 +225,11 @@ def test_handle_close(chat_gui, mock_stub):
 def test_display_message(chat_gui):
     """Test message display functionality"""
     chat_gui.username = "testuser"
-    chat_gui.show_chat_window()  # Show chat window first
+    chat_gui.show_chat_window()
     
     test_message = "Test message"
     chat_gui.display_message(test_message)
     
     display_text = chat_gui.chat_display.get("1.0", tk.END)
     assert test_message in display_text.strip()
-
 
