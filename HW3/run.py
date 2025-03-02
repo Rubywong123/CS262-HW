@@ -73,6 +73,7 @@ class VirtualMachine:
         print(log_entry.strip())
 
     def run(self):
+        self.log(f"Started with clock speed {self.clock_speed}")
         while self.running:
             time.sleep(1 / self.clock_speed)
             # check for new messages
