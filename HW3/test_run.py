@@ -5,11 +5,9 @@ import time
 import os
 import json
 import shutil
-from unittest.mock import patch, MagicMock, mock_open
+from unittest.mock import patch, MagicMock, mock_open,call
 import sys
 from run import VirtualMachine, Message
-import random
-from math import ceil
 
 class TestMessage(unittest.TestCase):
     def test_message_serialization(self):
@@ -221,6 +219,27 @@ class TestVirtualMachine(unittest.TestCase):
             mock_socket_instance = mock_socket.return_value
             mock_socket_instance.connect.assert_called_with(("localhost", 5002))
             mock_socket_instance.send.assert_called()
+
+    def test_run_with_message_in_queue(self):
+        """Test run method when there's a message in the queue."""
+        vm = VirtualMachine(id=1, peers=[0, 2])
+        test_message = Message(10, 2)
+        vm.message_queue.append(test_message)
+
+        with patch.object(vm, 'process_message') as mock_process:
+            def stop_after_one_iteration(_):
+                vm.running = False
+
+            mock_process.side_effect = stop_after_one_iteration
+
+            vm.run()
+
+            mock_process.assert_called_once()
+
+            called_message = mock_process.call_args[0][0]
+            assert called_message.clock == 10
+            assert called_message.sender == 2
+
 
 if __name__ == "__main__":
     unittest.main()
