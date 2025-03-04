@@ -1,0 +1,295 @@
+1740931966.3076859 - Machine 2: Started with clock speed 5	Message Queue Length: 0
+1740931966.5224519 - Machine 2: Received message from 0, Clock: 1	Message Queue Length: 0
+1740931966.72858 - Machine 2: Internal event, Clock: 2	Message Queue Length: 0
+1740931966.933694 - Machine 2: Internal event, Clock: 3	Message Queue Length: 0
+1740931967.136767 - Machine 2: Received message from 0, Clock: 4	Message Queue Length: 0
+1740931967.340043 - Machine 2: Internal event, Clock: 5	Message Queue Length: 0
+1740931967.540395 - Machine 2: Internal event, Clock: 6	Message Queue Length: 0
+1740931967.7421272 - Machine 2: Internal event, Clock: 7	Message Queue Length: 0
+1740931967.945977 - Machine 2: Received message from 0, Clock: 9	Message Queue Length: 0
+1740931968.1473038 - Machine 2: Internal event, Clock: 10	Message Queue Length: 0
+1740931968.3660219 - Machine 2: Internal event, Clock: 11	Message Queue Length: 0
+1740931968.570144 - Machine 2: Internal event, Clock: 12	Message Queue Length: 0
+1740931968.7708192 - Machine 2: Received message from 0, Clock: 14	Message Queue Length: 0
+1740931968.975897 - Machine 2: Received message from 0, Clock: 15	Message Queue Length: 0
+1740931969.179827 - Machine 2: Internal event, Clock: 16	Message Queue Length: 0
+1740931969.3846312 - Machine 2: Internal event, Clock: 17	Message Queue Length: 0
+1740931969.588362 - Machine 2: Internal event, Clock: 18	Message Queue Length: 0
+1740931969.792591 - Machine 2: Received message from 0, Clock: 20	Message Queue Length: 0
+1740931969.997519 - Machine 2: Internal event, Clock: 21	Message Queue Length: 0
+1740931970.202677 - Machine 2: Internal event, Clock: 22	Message Queue Length: 0
+1740931970.406353 - Machine 2: Received message from 0, Clock: 23	Message Queue Length: 0
+1740931970.611017 - Machine 2: Internal event, Clock: 24	Message Queue Length: 0
+1740931970.816043 - Machine 2: Internal event, Clock: 25	Message Queue Length: 0
+1740931971.02176 - Machine 2: Sent message to 1, Clock: 26	Message Queue Length: 0
+1740931971.2260401 - Machine 2: Received message from 0, Clock: 28	Message Queue Length: 0
+1740931971.429177 - Machine 2: Internal event, Clock: 29	Message Queue Length: 0
+1740931971.6327481 - Machine 2: Broadcasted message, Clock: 30	Message Queue Length: 0
+1740931971.837885 - Machine 2: Internal event, Clock: 31	Message Queue Length: 0
+1740931972.042312 - Machine 2: Internal event, Clock: 32	Message Queue Length: 0
+1740931972.2466822 - Machine 2: Received message from 0, Clock: 34	Message Queue Length: 0
+1740931972.446827 - Machine 2: Internal event, Clock: 35	Message Queue Length: 0
+1740931972.649892 - Machine 2: Received message from 0, Clock: 37	Message Queue Length: 0
+1740931972.85241 - Machine 2: Sent message to 1, Clock: 38	Message Queue Length: 0
+1740931973.0554922 - Machine 2: Internal event, Clock: 39	Message Queue Length: 0
+1740931973.2604952 - Machine 2: Broadcasted message, Clock: 40	Message Queue Length: 0
+1740931973.465013 - Machine 2: Internal event, Clock: 41	Message Queue Length: 0
+1740931973.6698089 - Machine 2: Sent message to 1, Clock: 42	Message Queue Length: 0
+1740931973.8751411 - Machine 2: Sent message to 0, Clock: 43	Message Queue Length: 0
+1740931974.0804448 - Machine 2: Sent message to 0, Clock: 44	Message Queue Length: 0
+1740931974.2851741 - Machine 2: Internal event, Clock: 45	Message Queue Length: 0
+1740931974.4896598 - Machine 2: Received message from 0, Clock: 47	Message Queue Length: 1
+1740931974.694792 - Machine 2: Received message from 1, Clock: 48	Message Queue Length: 0
+1740931974.899623 - Machine 2: Sent message to 0, Clock: 49	Message Queue Length: 0
+1740931975.103847 - Machine 2: Internal event, Clock: 50	Message Queue Length: 0
+1740931975.307791 - Machine 2: Internal event, Clock: 51	Message Queue Length: 0
+1740931975.508534 - Machine 2: Received message from 0, Clock: 53	Message Queue Length: 0
+1740931975.71207 - Machine 2: Internal event, Clock: 54	Message Queue Length: 0
+1740931975.913285 - Machine 2: Received message from 0, Clock: 56	Message Queue Length: 0
+1740931976.115532 - Machine 2: Internal event, Clock: 57	Message Queue Length: 0
+1740931976.320547 - Machine 2: Broadcasted message, Clock: 58	Message Queue Length: 0
+1740931976.5212889 - Machine 2: Internal event, Clock: 59	Message Queue Length: 0
+1740931976.7260659 - Machine 2: Internal event, Clock: 60	Message Queue Length: 0
+1740931976.9295769 - Machine 2: Internal event, Clock: 61	Message Queue Length: 0
+1740931977.129847 - Machine 2: Received message from 1, Clock: 62	Message Queue Length: 0
+1740931977.333004 - Machine 2: Internal event, Clock: 63	Message Queue Length: 0
+1740931977.536865 - Machine 2: Internal event, Clock: 64	Message Queue Length: 0
+1740931977.739529 - Machine 2: Received message from 0, Clock: 66	Message Queue Length: 0
+1740931977.9442172 - Machine 2: Internal event, Clock: 67	Message Queue Length: 0
+1740931978.147477 - Machine 2: Broadcasted message, Clock: 68	Message Queue Length: 0
+1740931978.348353 - Machine 2: Sent message to 1, Clock: 69	Message Queue Length: 0
+1740931978.5521438 - Machine 2: Internal event, Clock: 70	Message Queue Length: 0
+1740931978.757043 - Machine 2: Sent message to 1, Clock: 71	Message Queue Length: 0
+1740931978.962143 - Machine 2: Internal event, Clock: 72	Message Queue Length: 0
+1740931979.16798 - Machine 2: Sent message to 0, Clock: 73	Message Queue Length: 0
+1740931979.369813 - Machine 2: Internal event, Clock: 74	Message Queue Length: 0
+1740931979.573486 - Machine 2: Internal event, Clock: 75	Message Queue Length: 0
+1740931979.778008 - Machine 2: Received message from 0, Clock: 78	Message Queue Length: 0
+1740931979.980027 - Machine 2: Received message from 0, Clock: 80	Message Queue Length: 0
+1740931980.1814961 - Machine 2: Internal event, Clock: 81	Message Queue Length: 0
+1740931980.385878 - Machine 2: Internal event, Clock: 82	Message Queue Length: 0
+1740931980.587861 - Machine 2: Sent message to 1, Clock: 83	Message Queue Length: 0
+1740931980.7929668 - Machine 2: Internal event, Clock: 84	Message Queue Length: 0
+1740931980.9957702 - Machine 2: Internal event, Clock: 85	Message Queue Length: 0
+1740931981.200516 - Machine 2: Internal event, Clock: 86	Message Queue Length: 0
+1740931981.401738 - Machine 2: Internal event, Clock: 87	Message Queue Length: 0
+1740931981.606726 - Machine 2: Received message from 0, Clock: 89	Message Queue Length: 0
+1740931981.811778 - Machine 2: Internal event, Clock: 90	Message Queue Length: 0
+1740931982.017824 - Machine 2: Broadcasted message, Clock: 91	Message Queue Length: 0
+1740931982.220014 - Machine 2: Sent message to 1, Clock: 92	Message Queue Length: 0
+1740931982.425876 - Machine 2: Sent message to 0, Clock: 93	Message Queue Length: 0
+1740931982.6312902 - Machine 2: Internal event, Clock: 94	Message Queue Length: 0
+1740931982.835608 - Machine 2: Internal event, Clock: 95	Message Queue Length: 0
+1740931983.040713 - Machine 2: Received message from 0, Clock: 97	Message Queue Length: 0
+1740931983.245165 - Machine 2: Broadcasted message, Clock: 98	Message Queue Length: 0
+1740931983.446156 - Machine 2: Internal event, Clock: 99	Message Queue Length: 0
+1740931983.6501372 - Machine 2: Internal event, Clock: 100	Message Queue Length: 0
+1740931983.855967 - Machine 2: Sent message to 0, Clock: 101	Message Queue Length: 0
+1740931984.057756 - Machine 2: Sent message to 0, Clock: 102	Message Queue Length: 0
+1740931984.2622342 - Machine 2: Internal event, Clock: 103	Message Queue Length: 0
+1740931984.4668229 - Machine 2: Internal event, Clock: 104	Message Queue Length: 0
+1740931984.6693099 - Machine 2: Received message from 1, Clock: 105	Message Queue Length: 0
+1740931984.8710341 - Machine 2: Received message from 1, Clock: 106	Message Queue Length: 0
+1740931985.076164 - Machine 2: Internal event, Clock: 107	Message Queue Length: 0
+1740931985.279794 - Machine 2: Received message from 0, Clock: 110	Message Queue Length: 1
+1740931985.482847 - Machine 2: Received message from 0, Clock: 111	Message Queue Length: 0
+1740931985.685577 - Machine 2: Internal event, Clock: 112	Message Queue Length: 0
+1740931985.890683 - Machine 2: Internal event, Clock: 113	Message Queue Length: 0
+1740931986.0916228 - Machine 2: Internal event, Clock: 114	Message Queue Length: 0
+1740931986.2967381 - Machine 2: Received message from 0, Clock: 116	Message Queue Length: 0
+1740931986.501894 - Machine 2: Internal event, Clock: 117	Message Queue Length: 0
+1740931986.7070389 - Machine 2: Internal event, Clock: 118	Message Queue Length: 0
+1740931986.9121568 - Machine 2: Received message from 0, Clock: 120	Message Queue Length: 0
+1740931987.117145 - Machine 2: Internal event, Clock: 121	Message Queue Length: 0
+1740931987.322342 - Machine 2: Received message from 0, Clock: 122	Message Queue Length: 0
+1740931987.5261009 - Machine 2: Internal event, Clock: 123	Message Queue Length: 0
+1740931987.729268 - Machine 2: Internal event, Clock: 124	Message Queue Length: 0
+1740931987.934509 - Machine 2: Internal event, Clock: 125	Message Queue Length: 0
+1740931988.139712 - Machine 2: Sent message to 1, Clock: 126	Message Queue Length: 0
+1740931988.3441448 - Machine 2: Internal event, Clock: 127	Message Queue Length: 0
+1740931988.5446131 - Machine 2: Internal event, Clock: 128	Message Queue Length: 0
+1740931988.748916 - Machine 2: Internal event, Clock: 129	Message Queue Length: 0
+1740931988.953558 - Machine 2: Received message from 0, Clock: 132	Message Queue Length: 0
+1740931989.1575081 - Machine 2: Sent message to 1, Clock: 133	Message Queue Length: 0
+1740931989.3720078 - Machine 2: Sent message to 0, Clock: 134	Message Queue Length: 0
+1740931989.574504 - Machine 2: Received message from 0, Clock: 136	Message Queue Length: 0
+1740931989.77614 - Machine 2: Received message from 0, Clock: 137	Message Queue Length: 0
+1740931989.979439 - Machine 2: Internal event, Clock: 138	Message Queue Length: 0
+1740931990.1839051 - Machine 2: Internal event, Clock: 139	Message Queue Length: 0
+1740931990.3894231 - Machine 2: Broadcasted message, Clock: 140	Message Queue Length: 0
+1740931990.593336 - Machine 2: Internal event, Clock: 141	Message Queue Length: 0
+1740931990.7947981 - Machine 2: Internal event, Clock: 142	Message Queue Length: 0
+1740931990.996479 - Machine 2: Internal event, Clock: 143	Message Queue Length: 0
+1740931991.198106 - Machine 2: Received message from 0, Clock: 145	Message Queue Length: 0
+1740931991.402168 - Machine 2: Internal event, Clock: 146	Message Queue Length: 0
+1740931991.603644 - Machine 2: Internal event, Clock: 147	Message Queue Length: 0
+1740931991.807631 - Machine 2: Received message from 0, Clock: 149	Message Queue Length: 0
+1740931992.0093791 - Machine 2: Internal event, Clock: 150	Message Queue Length: 0
+1740931992.2145228 - Machine 2: Received message from 0, Clock: 151	Message Queue Length: 0
+1740931992.416246 - Machine 2: Internal event, Clock: 152	Message Queue Length: 0
+1740931992.6201038 - Machine 2: Internal event, Clock: 153	Message Queue Length: 0
+1740931992.8232598 - Machine 2: Received message from 0, Clock: 154	Message Queue Length: 0
+1740931993.027147 - Machine 2: Sent message to 0, Clock: 155	Message Queue Length: 0
+1740931993.2288241 - Machine 2: Broadcasted message, Clock: 156	Message Queue Length: 0
+1740931993.430242 - Machine 2: Internal event, Clock: 157	Message Queue Length: 0
+1740931993.6340559 - Machine 2: Internal event, Clock: 158	Message Queue Length: 0
+1740931993.838283 - Machine 2: Internal event, Clock: 159	Message Queue Length: 0
+1740931994.039671 - Machine 2: Internal event, Clock: 160	Message Queue Length: 0
+1740931994.244789 - Machine 2: Internal event, Clock: 161	Message Queue Length: 0
+1740931994.4491038 - Machine 2: Sent message to 1, Clock: 162	Message Queue Length: 0
+1740931994.653719 - Machine 2: Received message from 0, Clock: 165	Message Queue Length: 0
+1740931994.8589382 - Machine 2: Broadcasted message, Clock: 166	Message Queue Length: 0
+1740931995.0636642 - Machine 2: Sent message to 0, Clock: 167	Message Queue Length: 0
+1740931995.269341 - Machine 2: Sent message to 0, Clock: 168	Message Queue Length: 0
+1740931995.492722 - Machine 2: Internal event, Clock: 169	Message Queue Length: 0
+1740931995.696704 - Machine 2: Internal event, Clock: 170	Message Queue Length: 0
+1740931995.901628 - Machine 2: Sent message to 1, Clock: 171	Message Queue Length: 0
+1740931996.103414 - Machine 2: Broadcasted message, Clock: 172	Message Queue Length: 0
+1740931996.3072581 - Machine 2: Internal event, Clock: 173	Message Queue Length: 0
+1740931996.509908 - Machine 2: Received message from 0, Clock: 176	Message Queue Length: 0
+1740931996.712969 - Machine 2: Internal event, Clock: 177	Message Queue Length: 0
+1740931996.9140851 - Machine 2: Received message from 0, Clock: 179	Message Queue Length: 0
+1740931997.117876 - Machine 2: Received message from 1, Clock: 180	Message Queue Length: 0
+1740931997.321883 - Machine 2: Received message from 0, Clock: 181	Message Queue Length: 0
+1740931997.5232031 - Machine 2: Internal event, Clock: 182	Message Queue Length: 0
+1740931997.725858 - Machine 2: Received message from 0, Clock: 183	Message Queue Length: 0
+1740931997.926185 - Machine 2: Internal event, Clock: 184	Message Queue Length: 0
+1740931998.1307251 - Machine 2: Sent message to 1, Clock: 185	Message Queue Length: 0
+1740931998.331452 - Machine 2: Received message from 0, Clock: 187	Message Queue Length: 0
+1740931998.536739 - Machine 2: Internal event, Clock: 188	Message Queue Length: 0
+1740931998.741867 - Machine 2: Received message from 1, Clock: 189	Message Queue Length: 0
+1740931998.946193 - Machine 2: Internal event, Clock: 190	Message Queue Length: 0
+1740931999.1513119 - Machine 2: Received message from 0, Clock: 192	Message Queue Length: 0
+1740931999.355816 - Machine 2: Internal event, Clock: 193	Message Queue Length: 0
+1740931999.560648 - Machine 2: Internal event, Clock: 194	Message Queue Length: 0
+1740931999.762018 - Machine 2: Received message from 0, Clock: 195	Message Queue Length: 0
+1740931999.966582 - Machine 2: Internal event, Clock: 196	Message Queue Length: 0
+1740932000.171666 - Machine 2: Internal event, Clock: 197	Message Queue Length: 0
+1740932000.374645 - Machine 2: Sent message to 1, Clock: 198	Message Queue Length: 0
+1740932000.578484 - Machine 2: Internal event, Clock: 199	Message Queue Length: 0
+1740932000.783627 - Machine 2: Internal event, Clock: 200	Message Queue Length: 0
+1740932000.987731 - Machine 2: Received message from 0, Clock: 203	Message Queue Length: 0
+1740932001.1886919 - Machine 2: Received message from 1, Clock: 204	Message Queue Length: 0
+1740932001.394788 - Machine 2: Broadcasted message, Clock: 205	Message Queue Length: 0
+1740932001.604484 - Machine 2: Sent message to 1, Clock: 206	Message Queue Length: 0
+1740932001.807613 - Machine 2: Internal event, Clock: 207	Message Queue Length: 0
+1740932002.011507 - Machine 2: Internal event, Clock: 208	Message Queue Length: 0
+1740932002.216418 - Machine 2: Broadcasted message, Clock: 209	Message Queue Length: 0
+1740932002.420404 - Machine 2: Internal event, Clock: 210	Message Queue Length: 0
+1740932002.625071 - Machine 2: Internal event, Clock: 211	Message Queue Length: 0
+1740932002.830198 - Machine 2: Internal event, Clock: 212	Message Queue Length: 0
+1740932003.0315719 - Machine 2: Received message from 1, Clock: 213	Message Queue Length: 1
+1740932003.231755 - Machine 2: Received message from 0, Clock: 215	Message Queue Length: 0
+1740932003.433878 - Machine 2: Sent message to 0, Clock: 216	Message Queue Length: 0
+1740932003.6414468 - Machine 2: Sent message to 0, Clock: 217	Message Queue Length: 0
+1740932003.84622 - Machine 2: Internal event, Clock: 218	Message Queue Length: 0
+1740932004.04774 - Machine 2: Broadcasted message, Clock: 219	Message Queue Length: 0
+1740932004.2484128 - Machine 2: Internal event, Clock: 220	Message Queue Length: 0
+1740932004.4495192 - Machine 2: Internal event, Clock: 221	Message Queue Length: 0
+1740932004.6514418 - Machine 2: Sent message to 0, Clock: 222	Message Queue Length: 0
+1740932004.8565261 - Machine 2: Internal event, Clock: 223	Message Queue Length: 0
+1740932005.061734 - Machine 2: Internal event, Clock: 224	Message Queue Length: 0
+1740932005.266294 - Machine 2: Internal event, Clock: 225	Message Queue Length: 0
+1740932005.478822 - Machine 2: Broadcasted message, Clock: 226	Message Queue Length: 0
+1740932005.6827462 - Machine 2: Internal event, Clock: 227	Message Queue Length: 0
+1740932005.8846312 - Machine 2: Internal event, Clock: 228	Message Queue Length: 0
+1740932006.091069 - Machine 2: Sent message to 0, Clock: 229	Message Queue Length: 0
+1740932006.296275 - Machine 2: Internal event, Clock: 230	Message Queue Length: 0
+1740932006.502652 - Machine 2: Sent message to 1, Clock: 231	Message Queue Length: 0
+1740932006.707794 - Machine 2: Internal event, Clock: 232	Message Queue Length: 0
+1740932006.909415 - Machine 2: Internal event, Clock: 233	Message Queue Length: 0
+1740932007.114608 - Machine 2: Received message from 1, Clock: 234	Message Queue Length: 0
+1740932007.316621 - Machine 2: Internal event, Clock: 235	Message Queue Length: 0
+1740932007.518701 - Machine 2: Internal event, Clock: 236	Message Queue Length: 0
+1740932007.72024 - Machine 2: Received message from 0, Clock: 242	Message Queue Length: 0
+1740932007.925594 - Machine 2: Internal event, Clock: 243	Message Queue Length: 0
+1740932008.1319191 - Machine 2: Sent message to 1, Clock: 244	Message Queue Length: 0
+1740932008.336556 - Machine 2: Received message from 0, Clock: 245	Message Queue Length: 0
+1740932008.541535 - Machine 2: Internal event, Clock: 246	Message Queue Length: 0
+1740932008.745206 - Machine 2: Received message from 0, Clock: 248	Message Queue Length: 0
+1740932008.948412 - Machine 2: Internal event, Clock: 249	Message Queue Length: 0
+1740932009.154124 - Machine 2: Received message from 0, Clock: 250	Message Queue Length: 0
+1740932009.35676 - Machine 2: Received message from 0, Clock: 251	Message Queue Length: 0
+1740932009.5629718 - Machine 2: Sent message to 0, Clock: 252	Message Queue Length: 0
+1740932009.768063 - Machine 2: Internal event, Clock: 253	Message Queue Length: 0
+1740932009.970119 - Machine 2: Sent message to 1, Clock: 254	Message Queue Length: 0
+1740932010.174674 - Machine 2: Internal event, Clock: 255	Message Queue Length: 0
+1740932010.379926 - Machine 2: Internal event, Clock: 256	Message Queue Length: 0
+1740932010.5838048 - Machine 2: Internal event, Clock: 257	Message Queue Length: 0
+1740932010.7885172 - Machine 2: Received message from 0, Clock: 260	Message Queue Length: 0
+1740932010.993751 - Machine 2: Internal event, Clock: 261	Message Queue Length: 0
+1740932011.196168 - Machine 2: Sent message to 0, Clock: 262	Message Queue Length: 0
+1740932011.402544 - Machine 2: Broadcasted message, Clock: 263	Message Queue Length: 0
+1740932011.606774 - Machine 2: Sent message to 1, Clock: 264	Message Queue Length: 0
+1740932011.81191 - Machine 2: Internal event, Clock: 265	Message Queue Length: 0
+1740932012.018583 - Machine 2: Sent message to 0, Clock: 266	Message Queue Length: 0
+1740932012.219795 - Machine 2: Internal event, Clock: 267	Message Queue Length: 0
+1740932012.424771 - Machine 2: Internal event, Clock: 268	Message Queue Length: 0
+1740932012.628851 - Machine 2: Received message from 1, Clock: 269	Message Queue Length: 0
+1740932012.830452 - Machine 2: Internal event, Clock: 270	Message Queue Length: 0
+1740932013.0331771 - Machine 2: Sent message to 0, Clock: 271	Message Queue Length: 0
+1740932013.236356 - Machine 2: Internal event, Clock: 272	Message Queue Length: 0
+1740932013.437855 - Machine 2: Internal event, Clock: 273	Message Queue Length: 0
+1740932013.643083 - Machine 2: Received message from 1, Clock: 274	Message Queue Length: 0
+1740932013.8469381 - Machine 2: Received message from 0, Clock: 278	Message Queue Length: 0
+1740932014.049396 - Machine 2: Received message from 0, Clock: 279	Message Queue Length: 0
+1740932014.254719 - Machine 2: Internal event, Clock: 280	Message Queue Length: 0
+1740932014.458603 - Machine 2: Received message from 0, Clock: 281	Message Queue Length: 1
+1740932014.661509 - Machine 2: Received message from 0, Clock: 282	Message Queue Length: 1
+1740932014.866579 - Machine 2: Received message from 0, Clock: 283	Message Queue Length: 0
+1740932015.069251 - Machine 2: Internal event, Clock: 284	Message Queue Length: 0
+1740932015.270486 - Machine 2: Received message from 1, Clock: 285	Message Queue Length: 0
+1740932015.475314 - Machine 2: Sent message to 1, Clock: 286	Message Queue Length: 0
+1740932015.678923 - Machine 2: Sent message to 0, Clock: 287	Message Queue Length: 0
+1740932015.882936 - Machine 2: Internal event, Clock: 288	Message Queue Length: 0
+1740932016.0868711 - Machine 2: Internal event, Clock: 289	Message Queue Length: 0
+1740932016.292744 - Machine 2: Broadcasted message, Clock: 290	Message Queue Length: 0
+1740932016.4944901 - Machine 2: Internal event, Clock: 291	Message Queue Length: 0
+1740932016.6978612 - Machine 2: Sent message to 0, Clock: 292	Message Queue Length: 0
+1740932016.9029179 - Machine 2: Received message from 1, Clock: 293	Message Queue Length: 0
+1740932017.1076748 - Machine 2: Broadcasted message, Clock: 294	Message Queue Length: 0
+1740932017.312373 - Machine 2: Internal event, Clock: 295	Message Queue Length: 0
+1740932017.5161788 - Machine 2: Internal event, Clock: 296	Message Queue Length: 0
+1740932017.718941 - Machine 2: Received message from 0, Clock: 301	Message Queue Length: 0
+1740932017.922957 - Machine 2: Broadcasted message, Clock: 302	Message Queue Length: 0
+1740932018.127973 - Machine 2: Internal event, Clock: 303	Message Queue Length: 0
+1740932018.333272 - Machine 2: Received message from 0, Clock: 304	Message Queue Length: 0
+1740932018.537214 - Machine 2: Received message from 0, Clock: 305	Message Queue Length: 1
+1740932018.7413352 - Machine 2: Received message from 0, Clock: 306	Message Queue Length: 0
+1740932018.943415 - Machine 2: Received message from 1, Clock: 307	Message Queue Length: 0
+1740932019.154457 - Machine 2: Broadcasted message, Clock: 308	Message Queue Length: 0
+1740932019.358092 - Machine 2: Sent message to 0, Clock: 309	Message Queue Length: 0
+1740932019.5607932 - Machine 2: Received message from 0, Clock: 312	Message Queue Length: 0
+1740932019.773354 - Machine 2: Internal event, Clock: 313	Message Queue Length: 0
+1740932019.974625 - Machine 2: Internal event, Clock: 314	Message Queue Length: 0
+1740932020.18172 - Machine 2: Internal event, Clock: 315	Message Queue Length: 0
+1740932020.3832672 - Machine 2: Internal event, Clock: 316	Message Queue Length: 0
+1740932020.58733 - Machine 2: Internal event, Clock: 317	Message Queue Length: 0
+1740932020.7894158 - Machine 2: Internal event, Clock: 318	Message Queue Length: 0
+1740932020.9931588 - Machine 2: Internal event, Clock: 319	Message Queue Length: 0
+1740932021.19427 - Machine 2: Received message from 0, Clock: 321	Message Queue Length: 0
+1740932021.398578 - Machine 2: Internal event, Clock: 322	Message Queue Length: 0
+1740932021.599276 - Machine 2: Internal event, Clock: 323	Message Queue Length: 0
+1740932021.8043709 - Machine 2: Internal event, Clock: 324	Message Queue Length: 0
+1740932022.007767 - Machine 2: Received message from 1, Clock: 325	Message Queue Length: 0
+1740932022.20874 - Machine 2: Internal event, Clock: 326	Message Queue Length: 0
+1740932022.415043 - Machine 2: Broadcasted message, Clock: 327	Message Queue Length: 0
+1740932022.616653 - Machine 2: Internal event, Clock: 328	Message Queue Length: 0
+1740932022.8179998 - Machine 2: Received message from 0, Clock: 330	Message Queue Length: 0
+1740932023.0231512 - Machine 2: Internal event, Clock: 331	Message Queue Length: 0
+1740932023.2284029 - Machine 2: Internal event, Clock: 332	Message Queue Length: 0
+1740932023.430285 - Machine 2: Internal event, Clock: 333	Message Queue Length: 0
+1740932023.635479 - Machine 2: Received message from 0, Clock: 335	Message Queue Length: 0
+1740932023.838998 - Machine 2: Received message from 0, Clock: 336	Message Queue Length: 0
+1740932024.0397172 - Machine 2: Internal event, Clock: 337	Message Queue Length: 0
+1740932024.244826 - Machine 2: Received message from 1, Clock: 338	Message Queue Length: 0
+1740932024.4500248 - Machine 2: Internal event, Clock: 339	Message Queue Length: 0
+1740932024.655042 - Machine 2: Sent message to 1, Clock: 340	Message Queue Length: 0
+1740932024.858817 - Machine 2: Received message from 0, Clock: 342	Message Queue Length: 0
+1740932025.062908 - Machine 2: Received message from 0, Clock: 344	Message Queue Length: 0
+1740932025.268064 - Machine 2: Received message from 0, Clock: 345	Message Queue Length: 0
+1740932025.471613 - Machine 2: Internal event, Clock: 346	Message Queue Length: 0
+1740932025.674006 - Machine 2: Internal event, Clock: 347	Message Queue Length: 0
+1740932025.889997 - Machine 2: Sent message to 1, Clock: 348	Message Queue Length: 0
+1740932026.097335 - Machine 2: Internal event, Clock: 349	Message Queue Length: 0
+1740932026.302509 - Machine 2: Sent message to 1, Clock: 350	Message Queue Length: 0
