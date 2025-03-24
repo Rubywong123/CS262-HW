@@ -12,12 +12,17 @@ service ChatService {
 
   // Coordination services
   rpc ReplicateMessage(ReplicateMessageRequest) returns (Response);
-  rpc Heartbeat(HeartbeatRequest) returns (Response);  // Heartbeat message
-  rpc LeaderElection(LeaderElectionRequest) returns (Response);  // Leader election message
+  rpc Heartbeat(HeartbeatRequest) returns (Response);  // Leader health check
+  rpc LeaderElection(LeaderElectionRequest) returns (Response);  // Deprecated or optional
 
-  // New RPC function to sync data between leader and follower
   rpc SyncData(SyncDataRequest) returns (SyncDataResponse);
+
+  // New leader election methods
+  rpc StartElection(ElectionRequest) returns (ElectionResponse);
+  rpc AnnounceLeader(CoordinatorMessage) returns (Response);
 }
+
+// ===== Request/Response Messages =====
 
 message LoginRequest {
   string username = 1;
@@ -82,16 +87,43 @@ message Response {
   string message = 2;
 }
 
-// Coordination messages
+// ===== Heartbeat & Leader Election =====
 
-// Heartbeat request and response for monitoring leader's health
-message HeartbeatRequest {
+message HeartbeatRequest {}
+
+message LeaderElectionRequest {
+  string requesting_server_id = 1;
+  string leader_id = 2;
 }
 
-// Leader election request and response
-message LeaderElectionRequest {
-  string requesting_server_id = 1;  // The server that is initiating the election
-  string leader_id = 2;             // The ID of the current leader (can be empty for new election)
+message ElectionRequest {
+  string candidate_address = 1;
+  int32 candidate_port = 2;
+}
+
+message ElectionResponse {
+  string status = 1;
+}
+
+message CoordinatorMessage {
+  string new_leader_address = 1;
+}
+
+// ===== SyncData Messages =====
+
+message FollowerSyncDataRequest {
+  string leader_address = 1;
+}
+
+message SyncDataRequest {
+  string replica_address = 1;
+}
+
+message SyncDataResponse {
+  string status = 1;
+  repeated string replica_addresses = 2;
+  repeated MessageData messages = 3;
+  repeated UserData users = 4;
 }
 
 message MessageData {
@@ -105,22 +137,4 @@ message MessageData {
 message UserData {
   string username = 1;
   bytes password_hash = 2;
-}
-
-// SyncData messages for data synchronization
-
-message FollowerSyncDataRequest {
-  string leader_address = 1;
-}
-
-message SyncDataRequest {
-  string replica_address = 1;
-}
-
-message SyncDataResponse {
-  string status = 1;
-  repeated string replica_addresses = 2;
-  // The data to be synchronized, such as chat messages, user accounts, etc.
-  repeated MessageData messages = 3;
-  repeated UserData users = 4;  // List of usernames
 }

@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nchat.proto\"2\n\x0cLoginRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"!\n\rLogoutRequest\x12\x10\n\x08username\x18\x01 \x01(\t\"\'\n\x13ListAccountsRequest\x12\x10\n\x08page_num\x18\x01 \x01(\x05\")\n\x14ListAccountsResponse\x12\x11\n\tusernames\x18\x01 \x03(\t\"J\n\x12SendMessageRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x11\n\trecipient\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\"6\n\x13ReadMessagesRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\r\n\x05limit\x18\x02 \x01(\x05\"B\n\x14ReadMessagesResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x1a\n\x08messages\x18\x02 \x03(\x0b\x32\x08.Message\"6\n\x07Message\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0e\n\x06sender\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\";\n\x14\x44\x65leteMessageRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x11\n\trecipient\x18\x02 \x01(\t\":\n\x14\x44\x65leteAccountRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\",\n\x18ListenForMessagesRequest\x12\x10\n\x08username\x18\x01 \x01(\t\"G\n\x17ReplicateMessageRequest\x12\x19\n\x07message\x18\x01 \x01(\x0b\x32\x08.Message\x12\x11\n\trecipient\x18\x02 \x01(\t\"+\n\x08Response\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x12\n\x10HeartbeatRequest\"H\n\x15LeaderElectionRequest\x12\x1c\n\x14requesting_server_id\x18\x01 \x01(\t\x12\x11\n\tleader_id\x18\x02 \x01(\t\"]\n\x0bMessageData\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0e\n\x06sender\x18\x02 \x01(\t\x12\x11\n\trecipient\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x0e\n\x06status\x18\x05 \x01(\t\"3\n\x08UserData\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x15\n\rpassword_hash\x18\x02 \x01(\x0c\"*\n\x0fSyncDataRequest\x12\x17\n\x0freplica_address\x18\x01 \x01(\t\"w\n\x10SyncDataResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x19\n\x11replica_addresses\x18\x02 \x03(\t\x12\x1e\n\x08messages\x18\x03 \x03(\x0b\x32\x0c.MessageData\x12\x18\n\x05users\x18\x04 \x03(\x0b\x32\t.UserData2\xea\x04\n\x0b\x43hatService\x12!\n\x05Login\x12\r.LoginRequest\x1a\t.Response\x12#\n\x06Logout\x12\x0e.LogoutRequest\x1a\t.Response\x12;\n\x0cListAccounts\x12\x14.ListAccountsRequest\x1a\x15.ListAccountsResponse\x12-\n\x0bSendMessage\x12\x13.SendMessageRequest\x1a\t.Response\x12;\n\x0cReadMessages\x12\x14.ReadMessagesRequest\x1a\x15.ReadMessagesResponse\x12\x31\n\rDeleteMessage\x12\x15.DeleteMessageRequest\x1a\t.Response\x12\x31\n\rDeleteAccount\x12\x15.DeleteAccountRequest\x1a\t.Response\x12:\n\x11ListenForMessages\x12\x19.ListenForMessagesRequest\x1a\x08.Message0\x01\x12\x37\n\x10ReplicateMessage\x12\x18.ReplicateMessageRequest\x1a\t.Response\x12)\n\tHeartbeat\x12\x11.HeartbeatRequest\x1a\t.Response\x12\x33\n\x0eLeaderElection\x12\x16.LeaderElectionRequest\x1a\t.Response\x12/\n\x08SyncData\x12\x10.SyncDataRequest\x1a\x11.SyncDataResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nchat.proto\"2\n\x0cLoginRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"!\n\rLogoutRequest\x12\x10\n\x08username\x18\x01 \x01(\t\"\'\n\x13ListAccountsRequest\x12\x10\n\x08page_num\x18\x01 \x01(\x05\")\n\x14ListAccountsResponse\x12\x11\n\tusernames\x18\x01 \x03(\t\"J\n\x12SendMessageRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x11\n\trecipient\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\"6\n\x13ReadMessagesRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\r\n\x05limit\x18\x02 \x01(\x05\"B\n\x14ReadMessagesResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x1a\n\x08messages\x18\x02 \x03(\x0b\x32\x08.Message\"6\n\x07Message\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0e\n\x06sender\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\";\n\x14\x44\x65leteMessageRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x11\n\trecipient\x18\x02 \x01(\t\":\n\x14\x44\x65leteAccountRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\",\n\x18ListenForMessagesRequest\x12\x10\n\x08username\x18\x01 \x01(\t\"G\n\x17ReplicateMessageRequest\x12\x19\n\x07message\x18\x01 \x01(\x0b\x32\x08.Message\x12\x11\n\trecipient\x18\x02 \x01(\t\"+\n\x08Response\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x12\n\x10HeartbeatRequest\"H\n\x15LeaderElectionRequest\x12\x1c\n\x14requesting_server_id\x18\x01 \x01(\t\x12\x11\n\tleader_id\x18\x02 \x01(\t\"D\n\x0f\x45lectionRequest\x12\x19\n\x11\x63\x61ndidate_address\x18\x01 \x01(\t\x12\x16\n\x0e\x63\x61ndidate_port\x18\x02 \x01(\x05\"\"\n\x10\x45lectionResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\"0\n\x12\x43oordinatorMessage\x12\x1a\n\x12new_leader_address\x18\x01 \x01(\t\"1\n\x17\x46ollowerSyncDataRequest\x12\x16\n\x0eleader_address\x18\x01 \x01(\t\"*\n\x0fSyncDataRequest\x12\x17\n\x0freplica_address\x18\x01 \x01(\t\"w\n\x10SyncDataResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x19\n\x11replica_addresses\x18\x02 \x03(\t\x12\x1e\n\x08messages\x18\x03 \x03(\x0b\x32\x0c.MessageData\x12\x18\n\x05users\x18\x04 \x03(\x0b\x32\t.UserData\"]\n\x0bMessageData\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0e\n\x06sender\x18\x02 \x01(\t\x12\x11\n\trecipient\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x0e\n\x06status\x18\x05 \x01(\t\"3\n\x08UserData\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x15\n\rpassword_hash\x18\x02 \x01(\x0c\x32\xd2\x05\n\x0b\x43hatService\x12!\n\x05Login\x12\r.LoginRequest\x1a\t.Response\x12#\n\x06Logout\x12\x0e.LogoutRequest\x1a\t.Response\x12;\n\x0cListAccounts\x12\x14.ListAccountsRequest\x1a\x15.ListAccountsResponse\x12-\n\x0bSendMessage\x12\x13.SendMessageRequest\x1a\t.Response\x12;\n\x0cReadMessages\x12\x14.ReadMessagesRequest\x1a\x15.ReadMessagesResponse\x12\x31\n\rDeleteMessage\x12\x15.DeleteMessageRequest\x1a\t.Response\x12\x31\n\rDeleteAccount\x12\x15.DeleteAccountRequest\x1a\t.Response\x12:\n\x11ListenForMessages\x12\x19.ListenForMessagesRequest\x1a\x08.Message0\x01\x12\x37\n\x10ReplicateMessage\x12\x18.ReplicateMessageRequest\x1a\t.Response\x12)\n\tHeartbeat\x12\x11.HeartbeatRequest\x1a\t.Response\x12\x33\n\x0eLeaderElection\x12\x16.LeaderElectionRequest\x1a\t.Response\x12/\n\x08SyncData\x12\x10.SyncDataRequest\x1a\x11.SyncDataResponse\x12\x34\n\rStartElection\x12\x10.ElectionRequest\x1a\x11.ElectionResponse\x12\x30\n\x0e\x41nnounceLeader\x12\x13.CoordinatorMessage\x1a\t.Responseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -61,14 +61,22 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_HEARTBEATREQUEST']._serialized_end=744
   _globals['_LEADERELECTIONREQUEST']._serialized_start=746
   _globals['_LEADERELECTIONREQUEST']._serialized_end=818
-  _globals['_MESSAGEDATA']._serialized_start=820
-  _globals['_MESSAGEDATA']._serialized_end=913
-  _globals['_USERDATA']._serialized_start=915
-  _globals['_USERDATA']._serialized_end=966
-  _globals['_SYNCDATAREQUEST']._serialized_start=968
-  _globals['_SYNCDATAREQUEST']._serialized_end=1010
-  _globals['_SYNCDATARESPONSE']._serialized_start=1012
-  _globals['_SYNCDATARESPONSE']._serialized_end=1131
-  _globals['_CHATSERVICE']._serialized_start=1134
-  _globals['_CHATSERVICE']._serialized_end=1752
+  _globals['_ELECTIONREQUEST']._serialized_start=820
+  _globals['_ELECTIONREQUEST']._serialized_end=888
+  _globals['_ELECTIONRESPONSE']._serialized_start=890
+  _globals['_ELECTIONRESPONSE']._serialized_end=924
+  _globals['_COORDINATORMESSAGE']._serialized_start=926
+  _globals['_COORDINATORMESSAGE']._serialized_end=974
+  _globals['_FOLLOWERSYNCDATAREQUEST']._serialized_start=976
+  _globals['_FOLLOWERSYNCDATAREQUEST']._serialized_end=1025
+  _globals['_SYNCDATAREQUEST']._serialized_start=1027
+  _globals['_SYNCDATAREQUEST']._serialized_end=1069
+  _globals['_SYNCDATARESPONSE']._serialized_start=1071
+  _globals['_SYNCDATARESPONSE']._serialized_end=1190
+  _globals['_MESSAGEDATA']._serialized_start=1192
+  _globals['_MESSAGEDATA']._serialized_end=1285
+  _globals['_USERDATA']._serialized_start=1287
+  _globals['_USERDATA']._serialized_end=1338
+  _globals['_CHATSERVICE']._serialized_start=1341
+  _globals['_CHATSERVICE']._serialized_end=2063
 # @@protoc_insertion_point(module_scope)

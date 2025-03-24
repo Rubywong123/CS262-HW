@@ -94,6 +94,16 @@ class ChatServiceStub(object):
                 request_serializer=chat__pb2.SyncDataRequest.SerializeToString,
                 response_deserializer=chat__pb2.SyncDataResponse.FromString,
                 _registered_method=True)
+        self.StartElection = channel.unary_unary(
+                '/ChatService/StartElection',
+                request_serializer=chat__pb2.ElectionRequest.SerializeToString,
+                response_deserializer=chat__pb2.ElectionResponse.FromString,
+                _registered_method=True)
+        self.AnnounceLeader = channel.unary_unary(
+                '/ChatService/AnnounceLeader',
+                request_serializer=chat__pb2.CoordinatorMessage.SerializeToString,
+                response_deserializer=chat__pb2.Response.FromString,
+                _registered_method=True)
 
 
 class ChatServiceServicer(object):
@@ -155,22 +165,34 @@ class ChatServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def Heartbeat(self, request, context):
-        """Heartbeat message
+        """Leader health check
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def LeaderElection(self, request, context):
-        """Leader election message
+        """Deprecated or optional
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def SyncData(self, request, context):
-        """New RPC function to sync data between leader and follower
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def StartElection(self, request, context):
+        """New leader election methods
         """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AnnounceLeader(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -237,6 +259,16 @@ def add_ChatServiceServicer_to_server(servicer, server):
                     servicer.SyncData,
                     request_deserializer=chat__pb2.SyncDataRequest.FromString,
                     response_serializer=chat__pb2.SyncDataResponse.SerializeToString,
+            ),
+            'StartElection': grpc.unary_unary_rpc_method_handler(
+                    servicer.StartElection,
+                    request_deserializer=chat__pb2.ElectionRequest.FromString,
+                    response_serializer=chat__pb2.ElectionResponse.SerializeToString,
+            ),
+            'AnnounceLeader': grpc.unary_unary_rpc_method_handler(
+                    servicer.AnnounceLeader,
+                    request_deserializer=chat__pb2.CoordinatorMessage.FromString,
+                    response_serializer=chat__pb2.Response.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -563,6 +595,60 @@ class ChatService(object):
             '/ChatService/SyncData',
             chat__pb2.SyncDataRequest.SerializeToString,
             chat__pb2.SyncDataResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def StartElection(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ChatService/StartElection',
+            chat__pb2.ElectionRequest.SerializeToString,
+            chat__pb2.ElectionResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AnnounceLeader(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ChatService/AnnounceLeader',
+            chat__pb2.CoordinatorMessage.SerializeToString,
+            chat__pb2.Response.FromString,
             options,
             channel_credentials,
             insecure,
