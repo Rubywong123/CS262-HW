@@ -124,3 +124,24 @@ class Storage:
             return {"status": "success"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
+        
+    def get_all_users(self):
+        """Returns all users in the database."""
+        cursor = self.execute_query("SELECT * FROM users")
+        return cursor.fetchall()
+    
+    def get_all_messages(self):
+        """Returns all messages in the database."""
+        cursor = self.execute_query("SELECT * FROM messages")
+        return cursor.fetchall()
+    
+    def store_synced_data(self, messages, users):
+        """Stores data received from the leader."""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.executemany("INSERT OR IGNORE INTO messages (id, sender, recipient, message, status) VALUES (?, ?, ?, ?, ?)",
+                           [(msg.id, msg.sender, msg.recipient, msg.message, msg.status) for msg in messages])
+        cursor.executemany("INSERT OR IGNORE INTO users (username, password_hash) VALUES (?, ?)",
+                           [(user.username, user.password_hash) for user in users])
+        conn.commit()
+        return {"status": "success", 'message': "Data stored successfully"}

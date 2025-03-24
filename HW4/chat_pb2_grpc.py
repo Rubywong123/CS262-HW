@@ -74,6 +74,26 @@ class ChatServiceStub(object):
                 request_serializer=chat__pb2.ListenForMessagesRequest.SerializeToString,
                 response_deserializer=chat__pb2.Message.FromString,
                 _registered_method=True)
+        self.ReplicateMessage = channel.unary_unary(
+                '/ChatService/ReplicateMessage',
+                request_serializer=chat__pb2.ReplicateMessageRequest.SerializeToString,
+                response_deserializer=chat__pb2.Response.FromString,
+                _registered_method=True)
+        self.Heartbeat = channel.unary_unary(
+                '/ChatService/Heartbeat',
+                request_serializer=chat__pb2.HeartbeatRequest.SerializeToString,
+                response_deserializer=chat__pb2.Response.FromString,
+                _registered_method=True)
+        self.LeaderElection = channel.unary_unary(
+                '/ChatService/LeaderElection',
+                request_serializer=chat__pb2.LeaderElectionRequest.SerializeToString,
+                response_deserializer=chat__pb2.Response.FromString,
+                _registered_method=True)
+        self.SyncData = channel.unary_unary(
+                '/ChatService/SyncData',
+                request_serializer=chat__pb2.SyncDataRequest.SerializeToString,
+                response_deserializer=chat__pb2.SyncDataResponse.FromString,
+                _registered_method=True)
 
 
 class ChatServiceServicer(object):
@@ -127,6 +147,34 @@ class ChatServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ReplicateMessage(self, request, context):
+        """Coordination services
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Heartbeat(self, request, context):
+        """Heartbeat message
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def LeaderElection(self, request, context):
+        """Leader election message
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SyncData(self, request, context):
+        """New RPC function to sync data between leader and follower
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ChatServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -169,6 +217,26 @@ def add_ChatServiceServicer_to_server(servicer, server):
                     servicer.ListenForMessages,
                     request_deserializer=chat__pb2.ListenForMessagesRequest.FromString,
                     response_serializer=chat__pb2.Message.SerializeToString,
+            ),
+            'ReplicateMessage': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReplicateMessage,
+                    request_deserializer=chat__pb2.ReplicateMessageRequest.FromString,
+                    response_serializer=chat__pb2.Response.SerializeToString,
+            ),
+            'Heartbeat': grpc.unary_unary_rpc_method_handler(
+                    servicer.Heartbeat,
+                    request_deserializer=chat__pb2.HeartbeatRequest.FromString,
+                    response_serializer=chat__pb2.Response.SerializeToString,
+            ),
+            'LeaderElection': grpc.unary_unary_rpc_method_handler(
+                    servicer.LeaderElection,
+                    request_deserializer=chat__pb2.LeaderElectionRequest.FromString,
+                    response_serializer=chat__pb2.Response.SerializeToString,
+            ),
+            'SyncData': grpc.unary_unary_rpc_method_handler(
+                    servicer.SyncData,
+                    request_deserializer=chat__pb2.SyncDataRequest.FromString,
+                    response_serializer=chat__pb2.SyncDataResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -387,6 +455,114 @@ class ChatService(object):
             '/ChatService/ListenForMessages',
             chat__pb2.ListenForMessagesRequest.SerializeToString,
             chat__pb2.Message.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ReplicateMessage(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ChatService/ReplicateMessage',
+            chat__pb2.ReplicateMessageRequest.SerializeToString,
+            chat__pb2.Response.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Heartbeat(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ChatService/Heartbeat',
+            chat__pb2.HeartbeatRequest.SerializeToString,
+            chat__pb2.Response.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def LeaderElection(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ChatService/LeaderElection',
+            chat__pb2.LeaderElectionRequest.SerializeToString,
+            chat__pb2.Response.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SyncData(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ChatService/SyncData',
+            chat__pb2.SyncDataRequest.SerializeToString,
+            chat__pb2.SyncDataResponse.FromString,
             options,
             channel_credentials,
             insecure,

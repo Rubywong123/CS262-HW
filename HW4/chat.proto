@@ -9,7 +9,14 @@ service ChatService {
   rpc DeleteMessage(DeleteMessageRequest) returns (Response);
   rpc DeleteAccount(DeleteAccountRequest) returns (Response);
   rpc ListenForMessages(ListenForMessagesRequest) returns (stream Message);
+
+  // Coordination services
   rpc ReplicateMessage(ReplicateMessageRequest) returns (Response);
+  rpc Heartbeat(HeartbeatRequest) returns (Response);  // Heartbeat message
+  rpc LeaderElection(LeaderElectionRequest) returns (Response);  // Leader election message
+
+  // New RPC function to sync data between leader and follower
+  rpc SyncData(SyncDataRequest) returns (SyncDataResponse);
 }
 
 message LoginRequest {
@@ -73,4 +80,47 @@ message ReplicateMessageRequest {
 message Response {
   string status = 1;
   string message = 2;
+}
+
+// Coordination messages
+
+// Heartbeat request and response for monitoring leader's health
+message HeartbeatRequest {
+}
+
+// Leader election request and response
+message LeaderElectionRequest {
+  string requesting_server_id = 1;  // The server that is initiating the election
+  string leader_id = 2;             // The ID of the current leader (can be empty for new election)
+}
+
+message MessageData {
+  int32 id = 1;
+  string sender = 2;
+  string recipient = 3;
+  string message = 4;
+  string status = 5;
+}
+
+message UserData {
+  string username = 1;
+  bytes password_hash = 2;
+}
+
+// SyncData messages for data synchronization
+
+message FollowerSyncDataRequest {
+  string leader_address = 1;
+}
+
+message SyncDataRequest {
+  string replica_address = 1;
+}
+
+message SyncDataResponse {
+  string status = 1;
+  repeated string replica_addresses = 2;
+  // The data to be synchronized, such as chat messages, user accounts, etc.
+  repeated MessageData messages = 3;
+  repeated UserData users = 4;  // List of usernames
 }
