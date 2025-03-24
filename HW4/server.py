@@ -81,6 +81,7 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
 
         replica_address = request.replica_address
         if replica_address not in self.replica_addresses:
+            print(f"New replica found: {replica_address}")
             self.replica_addresses.append(replica_address)
             self.replicas.append(chat_pb2_grpc.ChatServiceStub(grpc.insecure_channel(replica_address)))
 
@@ -94,6 +95,7 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         if replica_address in tmp_replica_addresses:
             tmp_replica_addresses.remove(replica_address)
 
+        print(f"Syncing data to replica: {replica_address}")
         return chat_pb2.SyncDataResponse(
             status="success",
             replica_addresses=tmp_replica_addresses,
@@ -116,6 +118,7 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
                 if replica_address not in self.replica_addresses:
                     self.replica_addresses.append(replica_address)
                     self.replicas.append(chat_pb2_grpc.ChatServiceStub(grpc.insecure_channel(replica_address)))
+        print(f"Synced with leader on port {self.leader_address.split(':')[-1]}")
         return chat_pb2.Response(status=response.status, message="Synced")
 
     def Monitor(self):

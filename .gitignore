@@ -174,3 +174,4 @@ cython_debug/
 # database
 */data.db
 */.DS_Store
+*.db

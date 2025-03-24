@@ -38,7 +38,8 @@ message ListAccountsRequest {
 }
 
 message ListAccountsResponse {
-  repeated string usernames = 1;
+  string status = 1;
+  repeated string usernames = 2;
 }
 
 message SendMessageRequest {
