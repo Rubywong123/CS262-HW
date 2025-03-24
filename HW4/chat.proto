@@ -14,8 +14,10 @@ service ChatService {
   rpc ReplicateMessage(ReplicateMessageRequest) returns (Response);
   rpc Heartbeat(HeartbeatRequest) returns (Response);  // Leader health check
   rpc LeaderElection(LeaderElectionRequest) returns (Response);  // Deprecated or optional
+  
 
   rpc SyncData(SyncDataRequest) returns (SyncDataResponse);
+  rpc FollowerSync(FollowerSyncDataRequest) returns (Response);
 
   // New leader election methods
   rpc StartElection(ElectionRequest) returns (ElectionResponse);
