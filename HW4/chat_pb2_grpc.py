@@ -4,6 +4,7 @@ import grpc
 import warnings
 
 import chat_pb2 as chat__pb2
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__
@@ -88,6 +89,16 @@ class ChatServiceStub(object):
                 '/ChatService/LeaderElection',
                 request_serializer=chat__pb2.LeaderElectionRequest.SerializeToString,
                 response_deserializer=chat__pb2.Response.FromString,
+                _registered_method=True)
+        self.GetReplicaAddresses = channel.unary_unary(
+                '/ChatService/GetReplicaAddresses',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=chat__pb2.ReplicaListResponse.FromString,
+                _registered_method=True)
+        self.WhoIsLeader = channel.unary_unary(
+                '/ChatService/WhoIsLeader',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=chat__pb2.LeaderInfoResponse.FromString,
                 _registered_method=True)
         self.SyncData = channel.unary_unary(
                 '/ChatService/SyncData',
@@ -183,6 +194,18 @@ class ChatServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetReplicaAddresses(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def WhoIsLeader(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def SyncData(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -265,6 +288,16 @@ def add_ChatServiceServicer_to_server(servicer, server):
                     servicer.LeaderElection,
                     request_deserializer=chat__pb2.LeaderElectionRequest.FromString,
                     response_serializer=chat__pb2.Response.SerializeToString,
+            ),
+            'GetReplicaAddresses': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetReplicaAddresses,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=chat__pb2.ReplicaListResponse.SerializeToString,
+            ),
+            'WhoIsLeader': grpc.unary_unary_rpc_method_handler(
+                    servicer.WhoIsLeader,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=chat__pb2.LeaderInfoResponse.SerializeToString,
             ),
             'SyncData': grpc.unary_unary_rpc_method_handler(
                     servicer.SyncData,
@@ -584,6 +617,60 @@ class ChatService(object):
             '/ChatService/LeaderElection',
             chat__pb2.LeaderElectionRequest.SerializeToString,
             chat__pb2.Response.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetReplicaAddresses(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ChatService/GetReplicaAddresses',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            chat__pb2.ReplicaListResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def WhoIsLeader(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ChatService/WhoIsLeader',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            chat__pb2.LeaderInfoResponse.FromString,
             options,
             channel_credentials,
             insecure,

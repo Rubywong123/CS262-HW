@@ -5,6 +5,8 @@ import chat_pb2
 import chat_pb2_grpc
 import grpc
 from argparse import ArgumentParser
+from google.protobuf.empty_pb2 import Empty
+import time
 
 def parse_args():
     parser = ArgumentParser()
@@ -26,9 +28,13 @@ class ChatGUI:
 
         # add procedure to handle window close event
         self.root.protocol("WM_DELETE_WINDOW", self.handle_close)
+        self.replica_addresses = []
 
         # Show login screen first
         self.show_login_window()
+
+        self.server_disconnected = threading.Event()
+        threading.Thread(target=self.monitor_connection, daemon=True).start()
 
     def show_login_window(self):
         """Display login screen."""
@@ -63,6 +69,7 @@ class ChatGUI:
             messagebox.showinfo("Success", "Login successful!")
             self.show_chat_window()
             threading.Thread(target=self.listen_for_messages, daemon=True).start()
+            threading.Thread(target=self.listen_for_server_info, daemon=True).start()
         else:
             messagebox.showerror("Login Failed", response.message)
 
@@ -195,8 +202,54 @@ class ChatGUI:
         try:
             for message in self.stub.ListenForMessages(chat_pb2.ListenForMessagesRequest(username=self.username)):
                 self.display_message(f"\n[New Message] {message.sender}: {message.message}\n")
-        except grpc.RpcError:
-            self.display_message("[Server disconnected]\n")
+        except grpc.RpcError as e:
+            # self.display_message("[Server disconnected]\n")
+            print("[Warning] Lost connection to ListenForMessages stream: ", e)
+            self.server_disconnected.set()
+
+    def listen_for_server_info(self):
+        while not self.server_disconnected.is_set():
+            try:
+                response = self.stub.GetReplicaAddresses(Empty())
+                if response.replica_addresses != self.replica_addresses:
+                    print("[System] Replica list updated:", response.replica_addresses)
+                    self.replica_addresses = list(response.replica_addresses)
+            except grpc.RpcError as e:
+                print("[Warning] Failed to fetch replica list:", e)
+                self.server_disconnected.set()
+                break
+            time.sleep(2)  # Polling interval (in seconds)
+
+    def monitor_connection(self):
+        while True:
+            if self.server_disconnected.is_set():
+                print("[System] Attempting to reconnect to a new leader...")
+
+                for address in self.replica_addresses:
+                    try:
+                        new_channel = grpc.insecure_channel(address)
+                        new_stub = chat_pb2_grpc.ChatServiceStub(new_channel)
+                        response = new_stub.WhoIsLeader(Empty())
+                        leader_addr = response.leader_address
+
+                        self.channel = grpc.insecure_channel(leader_addr)
+                        self.stub = chat_pb2_grpc.ChatServiceStub(self.channel)
+
+                        print(f"[System] Reconnected to new leader: {leader_addr}")
+
+                        # Clear the flag and restart threads
+                        self.server_disconnected.clear()
+                        threading.Thread(target=self.listen_for_messages, daemon=True).start()
+                        threading.Thread(target=self.listen_for_server_info, daemon=True).start()
+                        break
+
+                    except grpc.RpcError:
+                        continue
+
+                time.sleep(3)  # wait before retrying in case all replicas fail
+            else:
+                time.sleep(1)
+            
 
     def display_message(self, msg):
         """Display a message in the chat window."""

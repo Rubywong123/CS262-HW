@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 service ChatService {
   rpc Login(LoginRequest) returns (Response);
   rpc Logout(LogoutRequest) returns (Response);
@@ -15,6 +17,8 @@ service ChatService {
   rpc Heartbeat(HeartbeatRequest) returns (Response);  // Leader health check
   rpc LeaderElection(LeaderElectionRequest) returns (Response);  // Deprecated or optional
   
+  rpc GetReplicaAddresses(google.protobuf.Empty) returns (ReplicaListResponse);
+  rpc WhoIsLeader(google.protobuf.Empty) returns (LeaderInfoResponse);
 
   rpc SyncData(SyncDataRequest) returns (SyncDataResponse);
   rpc FollowerSync(FollowerSyncDataRequest) returns (Response);
@@ -61,7 +65,7 @@ message ReadMessagesResponse {
 }
 
 message Message {
-  int32 id = 1;
+  int64 id = 1;
   string sender = 2;
   string message = 3;
 }
@@ -127,10 +131,11 @@ message SyncDataResponse {
   repeated string replica_addresses = 2;
   repeated MessageData messages = 3;
   repeated UserData users = 4;
+  repeated string online_usernames = 5;
 }
 
 message MessageData {
-  int32 id = 1;
+  int64 id = 1;
   string sender = 2;
   string recipient = 3;
   string message = 4;
@@ -140,4 +145,13 @@ message MessageData {
 message UserData {
   string username = 1;
   bytes password_hash = 2;
+}
+
+message ReplicaListResponse {
+  repeated string replica_addresses = 1;
+}
+
+message LeaderInfoResponse {
+  string leader_address = 1;
+  bool is_leader = 2;
 }

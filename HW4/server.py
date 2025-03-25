@@ -9,6 +9,9 @@ import os
 import sys
 import socket
 import threading
+from google.protobuf import empty_pb2
+
+
 
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -40,18 +43,34 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
             ]
         else:
             self.leader_channel = grpc.insecure_channel(self.leader_address)
+            # initial data syncing.
             self.leader_stub = chat_pb2_grpc.ChatServiceStub(self.leader_channel)
-            self.FollowerSync()
+            sync_request = chat_pb2.SyncDataRequest(replica_address=f"{self.ip}:{self.port}")
+            response = self.leader_stub.SyncData(sync_request)
+
+            if response.status == "success":
+                self.storage.store_synced_data(response.messages, response.users)
+                for replica_address in response.replica_addresses:
+                    if replica_address not in self.replica_addresses:
+                        self.replica_addresses.append(replica_address)
+                        self.replicas.append(chat_pb2_grpc.ChatServiceStub(grpc.insecure_channel(replica_address)))
+            print(f"Synced with leader on port {self.leader_address.split(':')[-1]}")
+
             threading.Thread(target=self.Monitor, daemon=True).start()
 
     def Login(self, request, context):
         response = self.storage.login_register_user(request.username, request.password)
         if response["status"] == "success":
             self.online_users[request.username] = queue.Queue()
+        
+        if self.is_leader:
+            self.Broadcast_Sync()
         return chat_pb2.Response(status=response["status"], message=response.get("message", ""))
 
     def Logout(self, request, context):
         self.online_users.pop(request.username, None)
+        if self.is_leader:
+            self.Broadcast_Sync()
         return chat_pb2.Response(status="success", message="User logged out.")
 
     def SendMessage(self, request, context):
@@ -61,17 +80,32 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         sender = request.username
         recipient = request.recipient
         message = request.message
-        message_id = int(time.time())
+        message_id = int(time.time() * 1000)  # ensure uniqueness
 
-        self.storage.send_message(sender, recipient, message, status='read')
+        # record request size
+        request_size = sys.getsizeof(request.SerializeToString())
+        print(f"Received request size: {request_size} bytes")
+
+        # Real-time delivery if recipient is online
+        if recipient in self.online_users and isinstance(self.online_users[recipient], queue.Queue):
+            try:
+                self.online_users[recipient].put(chat_pb2.Message(id=message_id, sender=sender, message=message))
+                print(f"Real-time message delivered to {recipient}")
+                self.storage.send_message(sender, recipient, message, status='read')
+                self.Broadcast_Sync()
+                return chat_pb2.Response(status="success", message="Message delivered in real-time.")
+            except queue.Full:
+                pass  # fall through to store message below
+
+        # Store for later retrieval if recipient is offline
+        self.storage.send_message(sender, recipient, message, status='unread')
         self.Broadcast_Sync()
-
-        return chat_pb2.Response(status="success", message="Message sent")
+        return chat_pb2.Response(status="success", message="Message stored for later retrieval.")
 
     def Broadcast_Sync(self):
         for replica in self.replicas:
             try:
-                replica.FollowerSync()
+                replica.FollowerSync(chat_pb2.FollowerSyncDataRequest(leader_address=f"{self.ip}:{self.port}"))
             except grpc.RpcError as e:
                 print(f"Error syncing data to replica: {e}")
 
@@ -83,6 +117,7 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         if replica_address not in self.replica_addresses:
             print(f"New replica found: {replica_address}")
             self.replica_addresses.append(replica_address)
+            print(self.replica_addresses)
             self.replicas.append(chat_pb2_grpc.ChatServiceStub(grpc.insecure_channel(replica_address)))
 
         all_messages = self.storage.get_all_messages()
@@ -90,6 +125,7 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
 
         message_data = [chat_pb2.MessageData(**msg) for msg in all_messages]
         user_data = [chat_pb2.UserData(username=user['username'], password_hash=user['password_hash']) for user in all_users]
+        online_usernames = list(self.online_users.keys())
 
         tmp_replica_addresses = self.replica_addresses.copy()
         if replica_address in tmp_replica_addresses:
@@ -100,20 +136,17 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
             status="success",
             replica_addresses=tmp_replica_addresses,
             messages=message_data,
-            users=user_data
+            users=user_data,
+            online_usernames=online_usernames
         )
 
-    def FollowerSync(self, request=None, context=None):
-        if request is not None:
-            self.leader_address = request.leader_address
-            self.leader_channel = grpc.insecure_channel(self.leader_address)
-            self.leader_stub = chat_pb2_grpc.ChatServiceStub(self.leader_channel)
-
+    def FollowerSync(self, request, context):
         sync_request = chat_pb2.SyncDataRequest(replica_address=f"{self.ip}:{self.port}")
         response = self.leader_stub.SyncData(sync_request)
 
         if response.status == "success":
             self.storage.store_synced_data(response.messages, response.users)
+            self.online_users = {username: queue.Queue() for username in response.online_usernames}
             for replica_address in response.replica_addresses:
                 if replica_address not in self.replica_addresses:
                     self.replica_addresses.append(replica_address)
@@ -172,21 +205,44 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
         return chat_pb2.Response(status="alive", message="Heartbeat acknowledged")
 
     def ListAccounts(self, request, context):
-        return chat_pb2.ListAccountsResponse(
-            status="success",
-            usernames=self.storage.list_accounts(page_num=request.page_num).get("usernames", [])
-        )
+        if self.is_leader and self.replicas:
+            for replica in self.replicas:
+                try:
+                    return replica.ListAccounts(request)
+                except grpc.RpcError as e:
+                    print(f"Replica failed for ListAccounts: {e}")
+                    continue
+            return chat_pb2.ListAccountsResponse(status="error", usernames=[])
+        else:
+            response = self.storage.list_accounts(page_num=request.page_num)
+            return chat_pb2.ListAccountsResponse(
+                status="success",
+                usernames=response.get("usernames", [])
+            )
+        
 
     def ReadMessages(self, request, context):
-        limit = max(0, min(request.limit, 10))
-        if limit == 0:
-            return chat_pb2.ReadMessagesResponse(status="success", messages=[])
+        if self.is_leader and self.replicas:
+            for replica in self.replicas:
+                try:
+                    return replica.ReadMessages(request)
+                except grpc.RpcError as e:
+                    print(f"Replica failed for ReadMessages: {e}")
+                    continue
+            return chat_pb2.ReadMessagesResponse(status="error", messages=[])
+        else:
+            limit = max(0, min(request.limit, 10))
+            if limit == 0:
+                return chat_pb2.ReadMessagesResponse(status="success", messages=[])
 
-        messages = self.storage.read_messages(request.username, limit)
-        return chat_pb2.ReadMessagesResponse(
-            status=messages["status"],
-            messages=[chat_pb2.Message(id=msg["id"], sender=msg["sender"], message=msg["message"]) for msg in messages.get("messages", [])]
-        )
+            messages = self.storage.read_messages(request.username, limit)
+            return chat_pb2.ReadMessagesResponse(
+                status=messages["status"],
+                messages=[
+                    chat_pb2.Message(id=msg["id"], sender=msg["sender"], message=msg["message"])
+                    for msg in messages.get("messages", [])
+                ]
+            )
 
     def ListenForMessages(self, request, context):
         if request.username not in self.online_users:
@@ -201,6 +257,15 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
             except grpc.RpcError:
                 self.online_users.pop(request.username, None)
                 break
+
+    def GetReplicaAddresses(self, request, context):
+        return chat_pb2.ReplicaListResponse(replica_addresses=self.replica_addresses)
+    
+    def WhoIsLeader(self, request, context):
+        return chat_pb2.LeaderInfoResponse(
+            leader_address=f"{self.ip}:{self.port}" if self.is_leader else self.leader_address,
+            is_leader=self.is_leader
+        )
 
     def DeleteMessage(self, request, context):
         response = self.storage.delete_message(request.username, request.recipient)

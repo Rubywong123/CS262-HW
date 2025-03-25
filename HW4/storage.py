@@ -54,7 +54,7 @@ class Storage:
         cursor = self.execute_query("SELECT username FROM users ORDER BY username LIMIT ? OFFSET ?", (num_per_page, offset))
         return {
             'status': 'success',
-            'message': [row[0] for row in cursor.fetchall()]
+            'usernames': [row[0] for row in cursor.fetchall()]
         }
 
     def send_message(self, sender, recipient, message, status='unread', message_id=None):
