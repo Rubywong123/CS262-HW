@@ -62,5 +62,20 @@ gRPC is used to define and implement all server-client and inter-replica communi
 
 ## Test Covereage
 
+To run the tests and generate a coverage report, use the following command:
+
+```bash
+pytest --cov=. tests/
+```
+
+The test coverage statistics for the codebase are as follows:
+
+| File              | Statements | Missing | Coverage |
+|------------------|------------|----------|------------|
+| client.py        | 81         | 18       | 77%        |
+| gui.py           | 199        | 47       | 76%        |
+| server.py        | 232        | 59       | 75%        |
+| storage.py       | 93         | 7        | 92%        |
+| **TOTAL**        | **605**    | **131**   | **78%**    |
 
 
