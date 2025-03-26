@@ -56,7 +56,7 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
                         self.replicas.append(chat_pb2_grpc.ChatServiceStub(grpc.insecure_channel(replica_address)))
             print(f"Synced with leader on port {self.leader_address.split(':')[-1]}")
 
-            threading.Thread(target=self.Monitor, daemon=True).start()
+        threading.Thread(target=self.Monitor, daemon=True).start()
 
     def Login(self, request, context):
         response = self.storage.login_register_user(request.username, request.password)
@@ -156,13 +156,49 @@ class ChatService(chat_pb2_grpc.ChatServiceServicer):
 
     def Monitor(self):
         hb_request = chat_pb2.HeartbeatRequest()
-        while not self.is_leader:
-            try:
-                self.leader_stub.Heartbeat(hb_request)
-            except grpc.RpcError:
-                print("Leader is down. Starting election...")
-                self.initiate_election()
+
+        while True:
+            if self.is_leader:
+                # Leader monitors all replicas
+                to_remove = []
+                for idx, addr in enumerate(self.replica_addresses):
+                    try:
+                        self.replicas[idx].Heartbeat(hb_request)
+                    except grpc.RpcError:
+                        print(f"[Leader] Replica {addr} is down.")
+                        to_remove.append(idx)
+                # Remove failed replicas
+                for idx in sorted(to_remove, reverse=True):
+                    del self.replica_addresses[idx]
+                    del self.replicas[idx]
+                
+            else:
+                # Replica monitors the leader
+                try:
+                    self.leader_stub.Heartbeat(hb_request)
+                except grpc.RpcError:
+                    print("[Replica] Leader is down. Starting election...")
+                    self.initiate_election()
+
+                # Replica monitors other replicas
+                to_remove = []
+                for idx, addr in enumerate(self.replica_addresses):
+                    if addr == f"{self.ip}:{self.port}":
+                        continue  # Skip self
+                    try:
+                        self.replicas[idx].Heartbeat(hb_request)
+                    except grpc.RpcError:
+                        print(f"[Replica] Peer replica {addr} is unresponsive.")
+                        to_remove.append(idx)
+                
+                # Remove failed replicas
+                for idx in sorted(to_remove, reverse=True):
+                    del self.replica_addresses[idx]
+                    del self.replicas[idx]
+            if to_remove:
+                print(f"Replica addresses: {self.replica_addresses}")   
             time.sleep(1)
+
 
     def initiate_election(self):
         higher_nodes = [addr for addr in self.replica_addresses if int(addr.split(":")[-1]) > self.port]
