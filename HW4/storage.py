@@ -104,7 +104,7 @@ class Storage:
             message_id = cursor.fetchone()[0]
             self.execute_query("DELETE FROM messages WHERE id=? AND sender=? AND recipient=?", 
                                (int(message_id), username, recipient), commit=True)
-            return {"status": "success"}
+            return {"status": "success", 'message': "Message deleted successfully"}
         except sqlite3.IntegrityError:
             return {"status": "error", "message": "Message not found or you are not the sender"}
         
@@ -121,7 +121,7 @@ class Storage:
             self.execute_query("DELETE FROM users WHERE username=?", (username,), commit=True)
             self.execute_query("DELETE FROM messages WHERE recipient=?", (username,), commit=True)
 
-            return {"status": "success"}
+            return {"status": "success", 'message': "Account deleted successfully"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
         
